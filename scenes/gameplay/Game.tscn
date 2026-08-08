@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/gameplay/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="2_pause"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="3_player"]
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -10,6 +11,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_game")
 
 [node name="Background" type="ColorRect" parent="."]
@@ -19,9 +21,22 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 color = Color(0.0352941, 0.0470588, 0.0745098, 1)
 
 [node name="World" type="Node2D" parent="."]
+
+[node name="Player" parent="World" instance=ExtResource("3_player")]
+unique_name_in_owner = true
+position = Vector2(360, 1152)
+
+[node name="EnemyContainer" type="Node2D" parent="World"]
+
+[node name="ProjectileContainer" type="Node2D" parent="World"]
+
+[node name="PickupContainer" type="Node2D" parent="World"]
+
+[node name="EffectContainer" type="Node2D" parent="World"]
 
 [node name="Systems" type="Node" parent="."]
 
@@ -29,9 +44,9 @@ color = Color(0.0352941, 0.0470588, 0.0745098, 1)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 0.28
 anchor_right = 0.5
-anchor_bottom = 0.5
+anchor_bottom = 0.28
 offset_left = -190.0
 offset_top = -110.0
 offset_right = 190.0
@@ -43,12 +58,14 @@ alignment = 1
 
 [node name="TitleLabel" type="Label" parent="PlaceholderContent"]
 layout_mode = 2
-text = "Game Placeholder"
+mouse_filter = 2
+text = "Player Movement Test"
 horizontal_alignment = 1
 
 [node name="PhaseLabel" type="Label" parent="PlaceholderContent"]
 layout_mode = 2
-text = "Phase 1 scene and state flow only"
+mouse_filter = 2
+text = "Phase 2 player controller foundation"
 horizontal_alignment = 1
 
 [node name="PauseButton" type="Button" parent="PlaceholderContent"]
