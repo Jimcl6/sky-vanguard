@@ -1,0 +1,37 @@
+# Godot editor/cache data
+.godot/
+
+# Godot 3 legacy import/cache folders, safe to ignore if present
+.import/
+
+# Godot Android generated project, safe to ignore if present
+/android/
+
+# Exported builds
+builds/
+exports/
+dist/
+
+# Export credentials / local export configuration
+export_presets.cfg
+*.keystore
+*.p12
+*.jks
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Windows shortcuts
+*.lnk
