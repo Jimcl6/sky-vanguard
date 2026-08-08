@@ -65,9 +65,9 @@ func _start_run() -> void:
 	game.set_pause_visible(false)
 	game.set_flow_locked(false)
 	game.reset_run()
-	game.set_player_movement_enabled(false)
+	game.set_gameplay_enabled(false)
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.PLAYING)
-	game.set_player_movement_enabled(game_state_manager.is_gameplay_allowed())
+	game.set_gameplay_enabled(game_state_manager.is_gameplay_allowed())
 
 
 func _pause_run() -> void:
@@ -75,7 +75,7 @@ func _pause_run() -> void:
 		return
 
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.PAUSED)
-	game.set_player_movement_enabled(false)
+	game.set_gameplay_enabled(false)
 	game.set_pause_visible(true)
 
 
@@ -85,7 +85,7 @@ func _resume_run() -> void:
 
 	game.set_pause_visible(false)
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.PLAYING)
-	game.set_player_movement_enabled(game_state_manager.is_gameplay_allowed())
+	game.set_gameplay_enabled(game_state_manager.is_gameplay_allowed())
 
 
 func _trigger_game_over() -> void:
@@ -94,7 +94,8 @@ func _trigger_game_over() -> void:
 
 	_clear_game_over()
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.GAME_OVER)
-	game.set_player_movement_enabled(false)
+	game.set_gameplay_enabled(false)
+	game.clear_player_projectiles()
 	game.set_pause_visible(false)
 	game.set_flow_locked(true)
 

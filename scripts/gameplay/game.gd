@@ -11,14 +11,16 @@ const PLAYER_START_BOTTOM_MARGIN := 128.0
 @onready var trigger_game_over_button: Button = %TriggerGameOverButton
 @onready var pause_menu: Control = %PauseMenu
 @onready var player: Node = %Player
+@onready var projectile_container: Node2D = $World/ProjectileContainer
 
 
 func _ready() -> void:
 	pause_button.pressed.connect(_on_pause_button_pressed)
 	trigger_game_over_button.pressed.connect(_on_trigger_game_over_button_pressed)
 	pause_menu.resume_requested.connect(_on_resume_requested)
+	player.set_projectile_container(projectile_container)
 	reset_run()
-	set_player_movement_enabled(false)
+	set_gameplay_enabled(false)
 
 
 func set_pause_visible(should_show: bool) -> void:
@@ -36,8 +38,31 @@ func set_player_movement_enabled(should_enable: bool) -> void:
 	player.set_movement_enabled(should_enable)
 
 
+func set_player_fire_enabled(should_enable: bool) -> void:
+	player.set_fire_enabled(should_enable)
+
+
+func set_gameplay_enabled(should_enable: bool) -> void:
+	set_player_movement_enabled(should_enable)
+	set_player_fire_enabled(should_enable)
+	set_projectiles_movement_enabled(should_enable)
+
+
+func set_projectiles_movement_enabled(should_enable: bool) -> void:
+	for projectile in projectile_container.get_children():
+		if projectile.has_method("set_movement_enabled"):
+			projectile.set_movement_enabled(should_enable)
+
+
+func clear_player_projectiles() -> void:
+	for projectile in projectile_container.get_children():
+		projectile.queue_free()
+
+
 func reset_run() -> void:
+	clear_player_projectiles()
 	player.reset_for_run(_get_player_start_position())
+	player.set_projectile_container(projectile_container)
 
 
 func _get_player_start_position() -> Vector2:

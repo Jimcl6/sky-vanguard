@@ -9,6 +9,8 @@ signal player_died
 @export var start_bottom_margin := 128.0
 @export var touch_radius := 88.0
 
+@onready var weapon_controller: Node = $WeaponController
+
 var current_hp: int = 3
 var can_move := false
 var active_touch_id := -1
@@ -63,9 +65,22 @@ func set_movement_enabled(should_enable: bool) -> void:
 		_target_position = global_position
 
 
+func set_projectile_container(container: Node) -> void:
+	weapon_controller.set_projectile_container(container)
+
+
+func set_fire_enabled(should_enable: bool) -> void:
+	weapon_controller.set_fire_enabled(should_enable)
+
+
+func reset_weapon_system() -> void:
+	weapon_controller.reset_weapon()
+
+
 func reset_for_run(start_position: Variant = null) -> void:
 	reset_health()
 	_release_drag()
+	reset_weapon_system()
 
 	var resolved_start_position := get_default_start_position()
 	if start_position is Vector2:
