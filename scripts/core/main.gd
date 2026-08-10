@@ -96,8 +96,9 @@ func _trigger_game_over() -> void:
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.GAME_OVER)
 	game.lock_score()
 	game.set_gameplay_enabled(false)
-	game.clear_player_projectiles()
-	game.clear_basic_enemies()
+	game.clear_player_invulnerability()
+	game.clear_projectiles()
+	game.clear_enemies()
 	game.set_pause_visible(false)
 	game.set_flow_locked(true)
 

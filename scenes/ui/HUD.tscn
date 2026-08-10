@@ -24,8 +24,19 @@ theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 12
 
-[node name="ScoreLabel" type="Label" parent="MarginContainer"]
+[node name="HUDRow" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 24
+
+[node name="ScoreLabel" type="Label" parent="MarginContainer/HUDRow"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 text = "Score: 0"
+
+[node name="HPLabel" type="Label" parent="MarginContainer/HUDRow"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+text = "HP: 3"

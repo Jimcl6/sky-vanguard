@@ -2,22 +2,28 @@ extends Node2D
 class_name Player
 
 signal player_died
+signal hp_changed(current_hp: int, max_hp: int)
 
 @export var move_speed := 1200.0
 @export var max_hp := 3
 @export var bounds_margin := Vector2(48.0, 64.0)
 @export var start_bottom_margin := 128.0
 @export var touch_radius := 88.0
+@export var invulnerability_duration := 1.0
 
+@onready var visual: Polygon2D = $Visual
 @onready var weapon_controller: Node = $WeaponController
 
 var current_hp: int = 3
 var can_move := false
+var can_receive_damage := false
 var active_touch_id := -1
 var touch_offset := Vector2.ZERO
 
 var _target_position := Vector2.ZERO
 var _mouse_dragging := false
+var _is_invulnerable := false
+var _invulnerability_time_remaining := 0.0
 
 
 func _ready() -> void:
@@ -26,6 +32,8 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_update_invulnerability(delta)
+
 	if not can_move:
 		return
 
@@ -65,6 +73,10 @@ func set_movement_enabled(should_enable: bool) -> void:
 		_target_position = global_position
 
 
+func set_damage_enabled(should_enable: bool) -> void:
+	can_receive_damage = should_enable
+
+
 func set_projectile_container(container: Node) -> void:
 	weapon_controller.set_projectile_container(container)
 
@@ -79,6 +91,7 @@ func reset_weapon_system() -> void:
 
 func reset_for_run(start_position: Variant = null) -> void:
 	reset_health()
+	clear_invulnerability()
 	_release_drag()
 	reset_weapon_system()
 
@@ -92,16 +105,33 @@ func reset_for_run(start_position: Variant = null) -> void:
 
 func reset_health() -> void:
 	current_hp = max_hp
+	hp_changed.emit(current_hp, max_hp)
 
 
-func take_damage(amount: int) -> void:
-	if amount <= 0 or current_hp <= 0:
-		return
+func take_damage(amount: int) -> bool:
+	if amount <= 0 or current_hp <= 0 or not can_receive_damage:
+		return false
+
+	if _is_invulnerable:
+		return true
 
 	current_hp = int(clamp(current_hp - amount, 0, max_hp))
+	hp_changed.emit(current_hp, max_hp)
 
 	if current_hp == 0:
+		clear_invulnerability()
 		player_died.emit()
+	else:
+		_start_invulnerability()
+
+	return true
+
+
+func clear_invulnerability() -> void:
+	_is_invulnerable = false
+	_invulnerability_time_remaining = 0.0
+	if is_instance_valid(visual):
+		visual.modulate.a = 1.0
 
 
 func get_default_start_position() -> Vector2:
@@ -161,6 +191,23 @@ func _release_drag() -> void:
 	active_touch_id = -1
 	touch_offset = Vector2.ZERO
 	_mouse_dragging = false
+
+
+func _start_invulnerability() -> void:
+	_is_invulnerable = true
+	_invulnerability_time_remaining = invulnerability_duration
+
+
+func _update_invulnerability(delta: float) -> void:
+	if not _is_invulnerable or not can_receive_damage:
+		return
+
+	_invulnerability_time_remaining -= delta
+	var blink_step := int(_invulnerability_time_remaining * 12.0)
+	visual.modulate.a = 0.45 if blink_step % 2 == 0 else 1.0
+
+	if _invulnerability_time_remaining <= 0.0:
+		clear_invulnerability()
 
 
 func _is_touch_start_allowed(pointer_position: Vector2) -> bool:
