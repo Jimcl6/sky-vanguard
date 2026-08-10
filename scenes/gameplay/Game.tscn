@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/gameplay/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="2_pause"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="3_player"]
+[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="4_hud"]
+[ext_resource type="Script" path="res://scripts/systems/score_system.gd" id="5_score"]
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -40,6 +42,10 @@ position = Vector2(360, 1152)
 
 [node name="Systems" type="Node" parent="."]
 
+[node name="ScoreSystem" type="Node" parent="Systems"]
+unique_name_in_owner = true
+script = ExtResource("5_score")
+
 [node name="PlaceholderContent" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
@@ -59,13 +65,13 @@ alignment = 1
 [node name="TitleLabel" type="Label" parent="PlaceholderContent"]
 layout_mode = 2
 mouse_filter = 2
-text = "Player Movement Test"
+text = "Combat Loop Test"
 horizontal_alignment = 1
 
 [node name="PhaseLabel" type="Label" parent="PlaceholderContent"]
 layout_mode = 2
 mouse_filter = 2
-text = "Phase 2 player controller foundation"
+text = "Phase 4 Basic Enemy and score"
 horizontal_alignment = 1
 
 [node name="PauseButton" type="Button" parent="PlaceholderContent"]
@@ -79,6 +85,9 @@ layout_mode = 2
 text = "Trigger Game Over"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="CanvasLayer" instance=ExtResource("4_hud")]
+unique_name_in_owner = true
 
 [node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("2_pause")]
 unique_name_in_owner = true
