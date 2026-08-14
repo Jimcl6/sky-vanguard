@@ -9,6 +9,7 @@ const PLAYER_START_BOTTOM_MARGIN := 128.0
 const ENEMY_BASIC_SCENE := preload("res://scenes/enemies/EnemyBasic.tscn")
 const ENEMY_SHOOTER_SCENE := preload("res://scenes/enemies/EnemyShooter.tscn")
 const WEAPON_PICKUP_SCENE := preload("res://scenes/pickups/WeaponPickup.tscn")
+const BOOSTER_PICKUP_SCENE := preload("res://scenes/pickups/BoosterPickup.tscn")
 const PHASE_5_BASIC_TEST_ENEMY_POSITIONS := [
 	Vector2(360.0, 260.0),
 	Vector2(250.0, 430.0),
@@ -27,6 +28,10 @@ const PHASE_6_TEST_PICKUPS := [
 		"position": Vector2(470.0, 760.0),
 	},
 ]
+const PHASE_7_TEST_BOOSTER := {
+	"booster_id": "temporary_shield",
+	"position": Vector2(360.0, 660.0),
+}
 
 @onready var pause_button: Button = %PauseButton
 @onready var trigger_game_over_button: Button = %TriggerGameOverButton
@@ -47,6 +52,7 @@ func _ready() -> void:
 	player.player_died.connect(_on_player_died)
 	player.hp_changed.connect(hud.update_hp)
 	player.weapon_changed.connect(hud.update_weapon)
+	player.shield_changed.connect(hud.update_shield)
 	player.set_projectile_container(projectile_container)
 	reset_run()
 	set_gameplay_enabled(false)
@@ -130,6 +136,10 @@ func clear_player_invulnerability() -> void:
 	player.clear_invulnerability()
 
 
+func clear_player_shield() -> void:
+	player.clear_shield()
+
+
 func lock_score() -> void:
 	score_system.lock_score()
 
@@ -143,6 +153,7 @@ func reset_run() -> void:
 	player.set_projectile_container(projectile_container)
 	_spawn_phase_5_test_enemies()
 	_spawn_phase_6_test_pickups()
+	_spawn_phase_7_test_booster()
 
 
 func _get_player_start_position() -> Vector2:
@@ -190,6 +201,13 @@ func _spawn_phase_6_test_pickups() -> void:
 		pickup.set("weapon_id", pickup_data["weapon_id"])
 		pickup_container.add_child(pickup)
 		pickup.global_position = pickup_data["position"]
+
+
+func _spawn_phase_7_test_booster() -> void:
+	var booster := BOOSTER_PICKUP_SCENE.instantiate()
+	booster.set("booster_id", PHASE_7_TEST_BOOSTER["booster_id"])
+	pickup_container.add_child(booster)
+	booster.global_position = PHASE_7_TEST_BOOSTER["position"]
 
 
 func _on_enemy_died(score_value: int) -> void:

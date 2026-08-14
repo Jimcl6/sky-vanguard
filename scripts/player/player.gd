@@ -4,6 +4,7 @@ class_name Player
 signal player_died
 signal hp_changed(current_hp: int, max_hp: int)
 signal weapon_changed(weapon_id: String, display_name: String)
+signal shield_changed(is_active: bool, hits_remaining: int, duration_remaining: float)
 
 @export var move_speed := 1200.0
 @export var max_hp := 3
@@ -11,8 +12,11 @@ signal weapon_changed(weapon_id: String, display_name: String)
 @export var start_bottom_margin := 128.0
 @export var touch_radius := 88.0
 @export var invulnerability_duration := 1.0
+@export var default_shield_duration := 5.0
+@export var default_shield_hit_count := 2
 
 @onready var visual: Polygon2D = $Visual
+@onready var shield_visual: Line2D = $ShieldVisual
 @onready var pickup_collector: Area2D = $PickupCollector
 @onready var weapon_controller: Node = $WeaponController
 
@@ -26,6 +30,8 @@ var _target_position := Vector2.ZERO
 var _mouse_dragging := false
 var _is_invulnerable := false
 var _invulnerability_time_remaining := 0.0
+var _shield_duration_remaining := 0.0
+var _shield_hits_remaining := 0
 
 
 func _ready() -> void:
@@ -37,6 +43,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_update_invulnerability(delta)
+	_update_shield(delta)
 
 	if not can_move:
 		return
@@ -105,9 +112,45 @@ func collect_weapon_pickup(weapon_id: String) -> bool:
 	return did_switch == true
 
 
+func collect_booster_pickup(booster_id: String, duration: float = -1.0, hit_count: int = -1) -> bool:
+	match booster_id:
+		"temporary_shield":
+			activate_shield(duration, hit_count)
+			return true
+		_:
+			return false
+
+
+func activate_shield(duration: float = -1.0, hit_count: int = -1) -> void:
+	var resolved_duration := default_shield_duration if duration <= 0.0 else duration
+	var resolved_hit_count := default_shield_hit_count if hit_count <= 0 else hit_count
+
+	_shield_duration_remaining = resolved_duration
+	_shield_hits_remaining = resolved_hit_count
+	_apply_shield_visual()
+	_emit_shield_changed()
+
+
+func has_active_shield() -> bool:
+	return _shield_duration_remaining > 0.0 and _shield_hits_remaining > 0
+
+
+func clear_shield() -> void:
+	if _shield_duration_remaining <= 0.0 and _shield_hits_remaining <= 0:
+		_apply_shield_visual()
+		_emit_shield_changed()
+		return
+
+	_shield_duration_remaining = 0.0
+	_shield_hits_remaining = 0
+	_apply_shield_visual()
+	_emit_shield_changed()
+
+
 func reset_for_run(start_position: Variant = null) -> void:
 	reset_health()
 	clear_invulnerability()
+	clear_shield()
 	_release_drag()
 	reset_weapon_system()
 
@@ -127,6 +170,10 @@ func reset_health() -> void:
 func take_damage(amount: int) -> bool:
 	if amount <= 0 or current_hp <= 0 or not can_receive_damage:
 		return false
+
+	if has_active_shield():
+		_absorb_damage_with_shield()
+		return true
 
 	if _is_invulnerable:
 		return true
@@ -224,6 +271,41 @@ func _update_invulnerability(delta: float) -> void:
 
 	if _invulnerability_time_remaining <= 0.0:
 		clear_invulnerability()
+
+
+func _update_shield(delta: float) -> void:
+	if not has_active_shield() or not can_receive_damage:
+		return
+
+	_shield_duration_remaining = maxf(_shield_duration_remaining - delta, 0.0)
+	if _shield_duration_remaining <= 0.0:
+		_expire_shield()
+	else:
+		_emit_shield_changed()
+
+
+func _absorb_damage_with_shield() -> void:
+	_shield_hits_remaining = maxi(_shield_hits_remaining - 1, 0)
+	if _shield_hits_remaining <= 0:
+		_expire_shield()
+	else:
+		_emit_shield_changed()
+
+
+func _expire_shield() -> void:
+	_shield_duration_remaining = 0.0
+	_shield_hits_remaining = 0
+	_apply_shield_visual()
+	_emit_shield_changed()
+
+
+func _apply_shield_visual() -> void:
+	if is_instance_valid(shield_visual):
+		shield_visual.visible = has_active_shield()
+
+
+func _emit_shield_changed() -> void:
+	shield_changed.emit(has_active_shield(), _shield_hits_remaining, _shield_duration_remaining)
 
 
 func _is_touch_start_allowed(pointer_position: Vector2) -> bool:

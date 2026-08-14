@@ -97,6 +97,7 @@ func _trigger_game_over() -> void:
 	game.lock_score()
 	game.set_gameplay_enabled(false)
 	game.clear_player_invulnerability()
+	game.clear_player_shield()
 	game.clear_projectiles()
 	game.clear_enemies()
 	game.clear_pickups()

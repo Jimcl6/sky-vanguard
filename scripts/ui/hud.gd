@@ -4,12 +4,14 @@ class_name HUD
 @onready var score_label: Label = %ScoreLabel
 @onready var hp_label: Label = %HPLabel
 @onready var weapon_label: Label = %WeaponLabel
+@onready var shield_label: Label = %ShieldLabel
 
 
 func _ready() -> void:
 	update_score(0)
 	update_hp(0, 0)
 	update_weapon("basic_blaster", "Basic Blaster")
+	update_shield(false, 0, 0.0)
 
 
 func update_score(new_score: int) -> void:
@@ -26,3 +28,11 @@ func update_hp(current_hp: int, max_hp: int) -> void:
 
 func update_weapon(_weapon_id: String, display_name: String) -> void:
 	weapon_label.text = "Weapon: %s" % display_name
+
+
+func update_shield(is_active: bool, hits_remaining: int, _duration_remaining: float) -> void:
+	if not is_active:
+		shield_label.text = "Shield: Off"
+		return
+
+	shield_label.text = "Shield: %d hits" % hits_remaining

@@ -16,6 +16,13 @@ script = ExtResource("1_player")
 color = Color(0.313726, 0.847059, 1, 1)
 polygon = PackedVector2Array(0, -36, 26, 28, 0, 14, -26, 28)
 
+[node name="ShieldVisual" type="Line2D" parent="."]
+visible = false
+width = 5.0
+default_color = Color(0.466667, 0.933333, 1, 0.85)
+closed = true
+points = PackedVector2Array(0, -52, 20, -48, 37, -37, 48, -20, 52, 0, 48, 20, 37, 37, 20, 48, 0, 52, -20, 48, -37, 37, -48, 20, -52, 0, -48, -20, -37, -37, -20, -48)
+
 [node name="DamageHitbox" type="Area2D" parent="."]
 collision_layer = 2
 collision_mask = 0
