@@ -8,6 +8,7 @@ const DESIGN_VIEWPORT_SIZE := Vector2(720.0, 1280.0)
 const PLAYER_START_BOTTOM_MARGIN := 128.0
 const ENEMY_BASIC_SCENE := preload("res://scenes/enemies/EnemyBasic.tscn")
 const ENEMY_SHOOTER_SCENE := preload("res://scenes/enemies/EnemyShooter.tscn")
+const WEAPON_PICKUP_SCENE := preload("res://scenes/pickups/WeaponPickup.tscn")
 const PHASE_5_BASIC_TEST_ENEMY_POSITIONS := [
 	Vector2(360.0, 260.0),
 	Vector2(250.0, 430.0),
@@ -15,6 +16,16 @@ const PHASE_5_BASIC_TEST_ENEMY_POSITIONS := [
 const PHASE_5_SHOOTER_TEST_ENEMY_POSITIONS := [
 	Vector2(470.0, 310.0),
 	Vector2(360.0, 560.0),
+]
+const PHASE_6_TEST_PICKUPS := [
+	{
+		"weapon_id": "spread_shot",
+		"position": Vector2(250.0, 760.0),
+	},
+	{
+		"weapon_id": "basic_blaster",
+		"position": Vector2(470.0, 760.0),
+	},
 ]
 
 @onready var pause_button: Button = %PauseButton
@@ -24,6 +35,7 @@ const PHASE_5_SHOOTER_TEST_ENEMY_POSITIONS := [
 @onready var player: Node = %Player
 @onready var enemy_container: Node2D = $World/EnemyContainer
 @onready var projectile_container: Node2D = $World/ProjectileContainer
+@onready var pickup_container: Node2D = $World/PickupContainer
 @onready var score_system: Node = %ScoreSystem
 
 
@@ -34,6 +46,7 @@ func _ready() -> void:
 	score_system.score_changed.connect(hud.update_score)
 	player.player_died.connect(_on_player_died)
 	player.hp_changed.connect(hud.update_hp)
+	player.weapon_changed.connect(hud.update_weapon)
 	player.set_projectile_container(projectile_container)
 	reset_run()
 	set_gameplay_enabled(false)
@@ -62,10 +75,15 @@ func set_player_damage_enabled(should_enable: bool) -> void:
 	player.set_damage_enabled(should_enable)
 
 
+func set_player_pickup_collection_enabled(should_enable: bool) -> void:
+	player.set_pickup_collection_enabled(should_enable)
+
+
 func set_gameplay_enabled(should_enable: bool) -> void:
 	set_player_movement_enabled(should_enable)
 	set_player_fire_enabled(should_enable)
 	set_player_damage_enabled(should_enable)
+	set_player_pickup_collection_enabled(should_enable)
 	set_projectiles_movement_enabled(should_enable)
 	set_enemies_gameplay_enabled(should_enable)
 
@@ -94,6 +112,12 @@ func clear_enemies() -> void:
 		enemy.queue_free()
 
 
+func clear_pickups() -> void:
+	for pickup in pickup_container.get_children():
+		pickup_container.remove_child(pickup)
+		pickup.queue_free()
+
+
 func clear_player_projectiles() -> void:
 	clear_projectiles()
 
@@ -113,10 +137,12 @@ func lock_score() -> void:
 func reset_run() -> void:
 	clear_projectiles()
 	clear_enemies()
+	clear_pickups()
 	score_system.reset_score()
 	player.reset_for_run(_get_player_start_position())
 	player.set_projectile_container(projectile_container)
 	_spawn_phase_5_test_enemies()
+	_spawn_phase_6_test_pickups()
 
 
 func _get_player_start_position() -> Vector2:
@@ -156,6 +182,14 @@ func _spawn_enemy(enemy_scene: PackedScene, spawn_position: Vector2) -> void:
 		enemy.set_projectile_container(projectile_container)
 	if enemy.has_method("set_gameplay_enabled"):
 		enemy.set_gameplay_enabled(false)
+
+
+func _spawn_phase_6_test_pickups() -> void:
+	for pickup_data in PHASE_6_TEST_PICKUPS:
+		var pickup := WEAPON_PICKUP_SCENE.instantiate()
+		pickup.set("weapon_id", pickup_data["weapon_id"])
+		pickup_container.add_child(pickup)
+		pickup.global_position = pickup_data["position"]
 
 
 func _on_enemy_died(score_value: int) -> void:

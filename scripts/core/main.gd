@@ -99,6 +99,7 @@ func _trigger_game_over() -> void:
 	game.clear_player_invulnerability()
 	game.clear_projectiles()
 	game.clear_enemies()
+	game.clear_pickups()
 	game.set_pause_visible(false)
 	game.set_flow_locked(true)
 

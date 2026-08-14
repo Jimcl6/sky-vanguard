@@ -3,6 +3,7 @@ class_name Player
 
 signal player_died
 signal hp_changed(current_hp: int, max_hp: int)
+signal weapon_changed(weapon_id: String, display_name: String)
 
 @export var move_speed := 1200.0
 @export var max_hp := 3
@@ -12,6 +13,7 @@ signal hp_changed(current_hp: int, max_hp: int)
 @export var invulnerability_duration := 1.0
 
 @onready var visual: Polygon2D = $Visual
+@onready var pickup_collector: Area2D = $PickupCollector
 @onready var weapon_controller: Node = $WeaponController
 
 var current_hp: int = 3
@@ -27,6 +29,8 @@ var _invulnerability_time_remaining := 0.0
 
 
 func _ready() -> void:
+	pickup_collector.area_entered.connect(_on_pickup_collector_area_entered)
+	weapon_controller.connect("weapon_changed", _on_weapon_changed)
 	reset_health()
 	_target_position = global_position
 
@@ -77,6 +81,10 @@ func set_damage_enabled(should_enable: bool) -> void:
 	can_receive_damage = should_enable
 
 
+func set_pickup_collection_enabled(should_enable: bool) -> void:
+	pickup_collector.monitoring = should_enable
+
+
 func set_projectile_container(container: Node) -> void:
 	weapon_controller.set_projectile_container(container)
 
@@ -87,6 +95,14 @@ func set_fire_enabled(should_enable: bool) -> void:
 
 func reset_weapon_system() -> void:
 	weapon_controller.reset_weapon()
+
+
+func collect_weapon_pickup(weapon_id: String) -> bool:
+	if not weapon_controller.has_method("set_weapon"):
+		return false
+
+	var did_switch: Variant = weapon_controller.call("set_weapon", weapon_id)
+	return did_switch == true
 
 
 func reset_for_run(start_position: Variant = null) -> void:
@@ -212,6 +228,17 @@ func _update_invulnerability(delta: float) -> void:
 
 func _is_touch_start_allowed(pointer_position: Vector2) -> bool:
 	return pointer_position.distance_to(global_position) <= touch_radius
+
+
+func _on_pickup_collector_area_entered(area: Area2D) -> void:
+	if not pickup_collector.monitoring or not area.has_method("collect_by_player"):
+		return
+
+	area.call("collect_by_player", self)
+
+
+func _on_weapon_changed(weapon_id: String, display_name: String) -> void:
+	weapon_changed.emit(weapon_id, display_name)
 
 
 func _clamp_to_play_area(value: Vector2) -> Vector2:
