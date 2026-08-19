@@ -8,8 +8,20 @@ const DESIGN_VIEWPORT_SIZE := Vector2(720.0, 1280.0)
 const PLAYER_START_BOTTOM_MARGIN := 128.0
 const ENEMY_BASIC_SCENE := preload("res://scenes/enemies/EnemyBasic.tscn")
 const ENEMY_SHOOTER_SCENE := preload("res://scenes/enemies/EnemyShooter.tscn")
+const ENEMY_DROP_CARRIER_SCENE := preload("res://scenes/enemies/EnemyDropCarrier.tscn")
 const WEAPON_PICKUP_SCENE := preload("res://scenes/pickups/WeaponPickup.tscn")
 const BOOSTER_PICKUP_SCENE := preload("res://scenes/pickups/BoosterPickup.tscn")
+const DROP_CATEGORY_WEAPON := "weapon"
+const DROP_CATEGORY_BOOSTER := "booster"
+const VALID_DROP_IDS := {
+	DROP_CATEGORY_WEAPON: [
+		"basic_blaster",
+		"spread_shot",
+	],
+	DROP_CATEGORY_BOOSTER: [
+		"temporary_shield",
+	],
+}
 const PHASE_5_BASIC_TEST_ENEMY_POSITIONS := [
 	Vector2(360.0, 260.0),
 	Vector2(250.0, 430.0),
@@ -32,6 +44,23 @@ const PHASE_7_TEST_BOOSTER := {
 	"booster_id": "temporary_shield",
 	"position": Vector2(360.0, 660.0),
 }
+const PHASE_8_DROP_CARRIER_TEST_ENEMIES := [
+	{
+		"position": Vector2(170.0, 180.0),
+		"drop_category": DROP_CATEGORY_WEAPON,
+		"drop_id": "spread_shot",
+	},
+	{
+		"position": Vector2(550.0, 220.0),
+		"drop_category": DROP_CATEGORY_BOOSTER,
+		"drop_id": "temporary_shield",
+	},
+	{
+		"position": Vector2(360.0, 150.0),
+		"drop_category": DROP_CATEGORY_WEAPON,
+		"drop_id": "basic_blaster",
+	},
+]
 
 @onready var pause_button: Button = %PauseButton
 @onready var trigger_game_over_button: Button = %TriggerGameOverButton
@@ -154,6 +183,7 @@ func reset_run() -> void:
 	_spawn_phase_5_test_enemies()
 	_spawn_phase_6_test_pickups()
 	_spawn_phase_7_test_booster()
+	_spawn_phase_8_drop_carriers()
 
 
 func _get_player_start_position() -> Vector2:
@@ -184,15 +214,19 @@ func _spawn_phase_5_test_enemies() -> void:
 		_spawn_enemy(ENEMY_SHOOTER_SCENE, spawn_position)
 
 
-func _spawn_enemy(enemy_scene: PackedScene, spawn_position: Vector2) -> void:
+func _spawn_enemy(enemy_scene: PackedScene, spawn_position: Vector2) -> Node:
 	var enemy := enemy_scene.instantiate()
 	enemy_container.add_child(enemy)
 	enemy.global_position = spawn_position
 	enemy.died.connect(_on_enemy_died)
+	if enemy.has_signal("drop_requested"):
+		enemy.drop_requested.connect(_on_enemy_drop_requested)
 	if enemy.has_method("set_projectile_container"):
 		enemy.set_projectile_container(projectile_container)
 	if enemy.has_method("set_gameplay_enabled"):
 		enemy.set_gameplay_enabled(false)
+
+	return enemy
 
 
 func _spawn_phase_6_test_pickups() -> void:
@@ -210,8 +244,39 @@ func _spawn_phase_7_test_booster() -> void:
 	booster.global_position = PHASE_7_TEST_BOOSTER["position"]
 
 
+func _spawn_phase_8_drop_carriers() -> void:
+	for carrier_data in PHASE_8_DROP_CARRIER_TEST_ENEMIES:
+		var carrier := _spawn_enemy(ENEMY_DROP_CARRIER_SCENE, carrier_data["position"])
+		carrier.set("drop_category", carrier_data["drop_category"])
+		carrier.set("drop_id", carrier_data["drop_id"])
+
+
 func _on_enemy_died(score_value: int) -> void:
 	score_system.add_score(score_value)
+
+
+func _on_enemy_drop_requested(drop_category: String, drop_id: String, drop_position: Vector2) -> void:
+	if not _is_valid_drop(drop_category, drop_id):
+		push_warning("DropCarrier requested invalid drop: %s/%s" % [drop_category, drop_id])
+		return
+
+	var pickup: Node
+	match drop_category:
+		DROP_CATEGORY_WEAPON:
+			pickup = WEAPON_PICKUP_SCENE.instantiate()
+			pickup.set("weapon_id", drop_id)
+		DROP_CATEGORY_BOOSTER:
+			pickup = BOOSTER_PICKUP_SCENE.instantiate()
+			pickup.set("booster_id", drop_id)
+		_:
+			return
+
+	pickup_container.add_child(pickup)
+	pickup.global_position = drop_position
+
+
+func _is_valid_drop(drop_category: String, drop_id: String) -> bool:
+	return VALID_DROP_IDS.has(drop_category) and VALID_DROP_IDS[drop_category].has(drop_id)
 
 
 func _on_player_died() -> void:
