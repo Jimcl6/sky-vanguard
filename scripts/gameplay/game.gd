@@ -9,6 +9,7 @@ const PLAYER_START_BOTTOM_MARGIN := 128.0
 const ENEMY_BASIC_SCENE := preload("res://scenes/enemies/EnemyBasic.tscn")
 const ENEMY_SHOOTER_SCENE := preload("res://scenes/enemies/EnemyShooter.tscn")
 const ENEMY_DROP_CARRIER_SCENE := preload("res://scenes/enemies/EnemyDropCarrier.tscn")
+const ENEMY_SEEKER_SCENE := preload("res://scenes/enemies/EnemySeeker.tscn")
 const WEAPON_PICKUP_SCENE := preload("res://scenes/pickups/WeaponPickup.tscn")
 const BOOSTER_PICKUP_SCENE := preload("res://scenes/pickups/BoosterPickup.tscn")
 const DROP_CATEGORY_WEAPON := "weapon"
@@ -60,6 +61,10 @@ const PHASE_8_DROP_CARRIER_TEST_ENEMIES := [
 		"drop_category": DROP_CATEGORY_WEAPON,
 		"drop_id": "basic_blaster",
 	},
+]
+const PHASE_9_SEEKER_TEST_ENEMY_POSITIONS := [
+	Vector2(220.0, 120.0),
+	Vector2(500.0, 170.0),
 ]
 
 @onready var pause_button: Button = %PauseButton
@@ -184,6 +189,7 @@ func reset_run() -> void:
 	_spawn_phase_6_test_pickups()
 	_spawn_phase_7_test_booster()
 	_spawn_phase_8_drop_carriers()
+	_spawn_phase_9_seekers()
 
 
 func _get_player_start_position() -> Vector2:
@@ -223,6 +229,8 @@ func _spawn_enemy(enemy_scene: PackedScene, spawn_position: Vector2) -> Node:
 		enemy.drop_requested.connect(_on_enemy_drop_requested)
 	if enemy.has_method("set_projectile_container"):
 		enemy.set_projectile_container(projectile_container)
+	if enemy.has_method("set_target"):
+		enemy.set_target(player)
 	if enemy.has_method("set_gameplay_enabled"):
 		enemy.set_gameplay_enabled(false)
 
@@ -249,6 +257,11 @@ func _spawn_phase_8_drop_carriers() -> void:
 		var carrier := _spawn_enemy(ENEMY_DROP_CARRIER_SCENE, carrier_data["position"])
 		carrier.set("drop_category", carrier_data["drop_category"])
 		carrier.set("drop_id", carrier_data["drop_id"])
+
+
+func _spawn_phase_9_seekers() -> void:
+	for spawn_position in PHASE_9_SEEKER_TEST_ENEMY_POSITIONS:
+		_spawn_enemy(ENEMY_SEEKER_SCENE, spawn_position)
 
 
 func _on_enemy_died(score_value: int) -> void:

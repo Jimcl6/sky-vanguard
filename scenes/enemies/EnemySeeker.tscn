@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_seeker.gd" id="1_enemy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hurtbox"]
+radius = 32.0
+
+[node name="EnemySeeker" type="Area2D"]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_enemy")
+
+[node name="Visual" type="Polygon2D" parent="."]
+color = Color(0.282353, 0.780392, 1, 1)
+polygon = PackedVector2Array(0, -40, 32, -10, 22, 30, 0, 14, -22, 30, -32, -10)
+
+[node name="CoreVisual" type="Polygon2D" parent="."]
+color = Color(1, 0.337255, 0.219608, 1)
+polygon = PackedVector2Array(0, -16, 14, 0, 0, 16, -14, 0)
+
+[node name="WarningVisual" type="Line2D" parent="."]
+visible = false
+width = 4.0
+default_color = Color(1, 0.941176, 0.313726, 0.95)
+points = PackedVector2Array(-24, 44, 0, 68, 24, 44)
+
+[node name="Hurtbox" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_hurtbox")
+
+[node name="FirePoint" type="Marker2D" parent="."]
+position = Vector2(0, 42)
