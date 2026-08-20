@@ -6,10 +6,6 @@ signal game_over_requested
 
 const DESIGN_VIEWPORT_SIZE := Vector2(720.0, 1280.0)
 const PLAYER_START_BOTTOM_MARGIN := 128.0
-const ENEMY_BASIC_SCENE := preload("res://scenes/enemies/EnemyBasic.tscn")
-const ENEMY_SHOOTER_SCENE := preload("res://scenes/enemies/EnemyShooter.tscn")
-const ENEMY_DROP_CARRIER_SCENE := preload("res://scenes/enemies/EnemyDropCarrier.tscn")
-const ENEMY_SEEKER_SCENE := preload("res://scenes/enemies/EnemySeeker.tscn")
 const WEAPON_PICKUP_SCENE := preload("res://scenes/pickups/WeaponPickup.tscn")
 const BOOSTER_PICKUP_SCENE := preload("res://scenes/pickups/BoosterPickup.tscn")
 const DROP_CATEGORY_WEAPON := "weapon"
@@ -23,14 +19,6 @@ const VALID_DROP_IDS := {
 		"temporary_shield",
 	],
 }
-const PHASE_5_BASIC_TEST_ENEMY_POSITIONS := [
-	Vector2(360.0, 260.0),
-	Vector2(250.0, 430.0),
-]
-const PHASE_5_SHOOTER_TEST_ENEMY_POSITIONS := [
-	Vector2(470.0, 310.0),
-	Vector2(360.0, 560.0),
-]
 const PHASE_6_TEST_PICKUPS := [
 	{
 		"weapon_id": "spread_shot",
@@ -45,27 +33,6 @@ const PHASE_7_TEST_BOOSTER := {
 	"booster_id": "temporary_shield",
 	"position": Vector2(360.0, 660.0),
 }
-const PHASE_8_DROP_CARRIER_TEST_ENEMIES := [
-	{
-		"position": Vector2(170.0, 180.0),
-		"drop_category": DROP_CATEGORY_WEAPON,
-		"drop_id": "spread_shot",
-	},
-	{
-		"position": Vector2(550.0, 220.0),
-		"drop_category": DROP_CATEGORY_BOOSTER,
-		"drop_id": "temporary_shield",
-	},
-	{
-		"position": Vector2(360.0, 150.0),
-		"drop_category": DROP_CATEGORY_WEAPON,
-		"drop_id": "basic_blaster",
-	},
-]
-const PHASE_9_SEEKER_TEST_ENEMY_POSITIONS := [
-	Vector2(220.0, 120.0),
-	Vector2(500.0, 170.0),
-]
 
 @onready var pause_button: Button = %PauseButton
 @onready var trigger_game_over_button: Button = %TriggerGameOverButton
@@ -76,6 +43,7 @@ const PHASE_9_SEEKER_TEST_ENEMY_POSITIONS := [
 @onready var projectile_container: Node2D = $World/ProjectileContainer
 @onready var pickup_container: Node2D = $World/PickupContainer
 @onready var score_system: Node = %ScoreSystem
+@onready var spawn_manager: Node = %SpawnManager
 
 
 func _ready() -> void:
@@ -88,6 +56,8 @@ func _ready() -> void:
 	player.weapon_changed.connect(hud.update_weapon)
 	player.shield_changed.connect(hud.update_shield)
 	player.set_projectile_container(projectile_container)
+	spawn_manager.enemy_spawned.connect(_on_spawn_manager_enemy_spawned)
+	spawn_manager.setup(enemy_container, projectile_container, player)
 	reset_run()
 	set_gameplay_enabled(false)
 
@@ -126,6 +96,7 @@ func set_gameplay_enabled(should_enable: bool) -> void:
 	set_player_pickup_collection_enabled(should_enable)
 	set_projectiles_movement_enabled(should_enable)
 	set_enemies_gameplay_enabled(should_enable)
+	spawn_manager.set_spawning_enabled(should_enable)
 
 
 func set_projectiles_movement_enabled(should_enable: bool) -> void:
@@ -185,11 +156,9 @@ func reset_run() -> void:
 	score_system.reset_score()
 	player.reset_for_run(_get_player_start_position())
 	player.set_projectile_container(projectile_container)
-	_spawn_phase_5_test_enemies()
+	spawn_manager.reset_spawning()
 	_spawn_phase_6_test_pickups()
 	_spawn_phase_7_test_booster()
-	_spawn_phase_8_drop_carriers()
-	_spawn_phase_9_seekers()
 
 
 func _get_player_start_position() -> Vector2:
@@ -212,29 +181,10 @@ func _on_resume_requested() -> void:
 	resume_requested.emit()
 
 
-func _spawn_phase_5_test_enemies() -> void:
-	for spawn_position in PHASE_5_BASIC_TEST_ENEMY_POSITIONS:
-		_spawn_enemy(ENEMY_BASIC_SCENE, spawn_position)
-
-	for spawn_position in PHASE_5_SHOOTER_TEST_ENEMY_POSITIONS:
-		_spawn_enemy(ENEMY_SHOOTER_SCENE, spawn_position)
-
-
-func _spawn_enemy(enemy_scene: PackedScene, spawn_position: Vector2) -> Node:
-	var enemy := enemy_scene.instantiate()
-	enemy_container.add_child(enemy)
-	enemy.global_position = spawn_position
+func _on_spawn_manager_enemy_spawned(enemy: Node) -> void:
 	enemy.died.connect(_on_enemy_died)
 	if enemy.has_signal("drop_requested"):
 		enemy.drop_requested.connect(_on_enemy_drop_requested)
-	if enemy.has_method("set_projectile_container"):
-		enemy.set_projectile_container(projectile_container)
-	if enemy.has_method("set_target"):
-		enemy.set_target(player)
-	if enemy.has_method("set_gameplay_enabled"):
-		enemy.set_gameplay_enabled(false)
-
-	return enemy
 
 
 func _spawn_phase_6_test_pickups() -> void:
@@ -250,18 +200,6 @@ func _spawn_phase_7_test_booster() -> void:
 	booster.set("booster_id", PHASE_7_TEST_BOOSTER["booster_id"])
 	pickup_container.add_child(booster)
 	booster.global_position = PHASE_7_TEST_BOOSTER["position"]
-
-
-func _spawn_phase_8_drop_carriers() -> void:
-	for carrier_data in PHASE_8_DROP_CARRIER_TEST_ENEMIES:
-		var carrier := _spawn_enemy(ENEMY_DROP_CARRIER_SCENE, carrier_data["position"])
-		carrier.set("drop_category", carrier_data["drop_category"])
-		carrier.set("drop_id", carrier_data["drop_id"])
-
-
-func _spawn_phase_9_seekers() -> void:
-	for spawn_position in PHASE_9_SEEKER_TEST_ENEMY_POSITIONS:
-		_spawn_enemy(ENEMY_SEEKER_SCENE, spawn_position)
 
 
 func _on_enemy_died(score_value: int) -> void:
