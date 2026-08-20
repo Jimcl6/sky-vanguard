@@ -3,6 +3,7 @@ extends Control
 signal pause_requested
 signal resume_requested
 signal game_over_requested
+signal main_menu_requested
 
 const DESIGN_VIEWPORT_SIZE := Vector2(720.0, 1280.0)
 const PLAYER_START_BOTTOM_MARGIN := 128.0
@@ -34,7 +35,6 @@ const PHASE_7_TEST_BOOSTER := {
 	"position": Vector2(360.0, 660.0),
 }
 
-@onready var pause_button: Button = %PauseButton
 @onready var trigger_game_over_button: Button = %TriggerGameOverButton
 @onready var pause_menu: Control = %PauseMenu
 @onready var hud: Control = %HUD
@@ -47,9 +47,10 @@ const PHASE_7_TEST_BOOSTER := {
 
 
 func _ready() -> void:
-	pause_button.pressed.connect(_on_pause_button_pressed)
+	hud.pause_requested.connect(_on_pause_requested)
 	trigger_game_over_button.pressed.connect(_on_trigger_game_over_button_pressed)
 	pause_menu.resume_requested.connect(_on_resume_requested)
+	pause_menu.main_menu_requested.connect(_on_main_menu_requested)
 	score_system.score_changed.connect(hud.update_score)
 	player.player_died.connect(_on_player_died)
 	player.hp_changed.connect(hud.update_hp)
@@ -64,12 +65,12 @@ func _ready() -> void:
 
 func set_pause_visible(should_show: bool) -> void:
 	pause_menu.visible = should_show
-	pause_button.disabled = should_show
+	hud.set_pause_enabled(not should_show)
 	trigger_game_over_button.disabled = should_show
 
 
 func set_flow_locked(is_locked: bool) -> void:
-	pause_button.disabled = is_locked
+	hud.set_pause_enabled(not is_locked)
 	trigger_game_over_button.disabled = is_locked
 
 
@@ -149,6 +150,10 @@ func lock_score() -> void:
 	score_system.lock_score()
 
 
+func get_current_score() -> int:
+	return score_system.current_score
+
+
 func reset_run() -> void:
 	clear_projectiles()
 	clear_enemies()
@@ -169,7 +174,7 @@ func _get_player_start_position() -> Vector2:
 	return Vector2(viewport_size.x * 0.5, viewport_size.y - PLAYER_START_BOTTOM_MARGIN)
 
 
-func _on_pause_button_pressed() -> void:
+func _on_pause_requested() -> void:
 	pause_requested.emit()
 
 
@@ -179,6 +184,10 @@ func _on_trigger_game_over_button_pressed() -> void:
 
 func _on_resume_requested() -> void:
 	resume_requested.emit()
+
+
+func _on_main_menu_requested() -> void:
+	main_menu_requested.emit()
 
 
 func _on_spawn_manager_enemy_spawned(enemy: Node) -> void:

@@ -1,6 +1,34 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stats"]
+bg_color = Color(0.030000, 0.046000, 0.072000, 0.780000)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.260000, 0.520000, 0.670000, 0.620000)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pause"]
+bg_color = Color(0.100000, 0.400000, 0.550000, 0.900000)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.650000, 0.930000, 1.000000, 0.850000)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -16,39 +44,85 @@ script = ExtResource("1_hud")
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 72.0
+offset_bottom = 128.0
 grow_horizontal = 2
 mouse_filter = 2
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 10
 
 [node name="HUDRow" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 24
+theme_override_constants/separation = 12
+alignment = 1
 
-[node name="ScoreLabel" type="Label" parent="MarginContainer/HUDRow"]
-unique_name_in_owner = true
+[node name="StatsPanel" type="PanelContainer" parent="MarginContainer/HUDRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_stats")
+
+[node name="StatsColumns" type="HBoxContainer" parent="MarginContainer/HUDRow/StatsPanel"]
 layout_mode = 2
 mouse_filter = 2
-text = "Score: 0"
+theme_override_constants/separation = 18
 
-[node name="HPLabel" type="Label" parent="MarginContainer/HUDRow"]
+[node name="PrimaryStats" type="VBoxContainer" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="ScoreLabel" type="Label" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns/PrimaryStats"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 mouse_filter = 2
-text = "HP: 3"
+theme_override_font_sizes/font_size = 22
+text = "Score 0"
+text_overrun_behavior = 3
 
-[node name="WeaponLabel" type="Label" parent="MarginContainer/HUDRow"]
+[node name="HPLabel" type="Label" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns/PrimaryStats"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 mouse_filter = 2
-text = "Weapon: Basic Blaster"
+theme_override_font_sizes/font_size = 22
+text = "HP 3"
+text_overrun_behavior = 3
 
-[node name="ShieldLabel" type="Label" parent="MarginContainer/HUDRow"]
+[node name="LoadoutStats" type="VBoxContainer" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="WeaponLabel" type="Label" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns/LoadoutStats"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 mouse_filter = 2
-text = "Shield: Off"
+theme_override_font_sizes/font_size = 22
+text = "Weapon Basic Blaster"
+text_overrun_behavior = 3
+
+[node name="ShieldLabel" type="Label" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns/LoadoutStats"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_font_sizes/font_size = 22
+text = "Shield Off"
+text_overrun_behavior = 3
+
+[node name="PauseButton" type="Button" parent="MarginContainer/HUDRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 68)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_pause")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pause")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pause")
+text = "Pause"

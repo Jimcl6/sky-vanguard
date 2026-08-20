@@ -62,6 +62,7 @@ func _start_run() -> void:
 	game.pause_requested.connect(_pause_run)
 	game.resume_requested.connect(_resume_run)
 	game.game_over_requested.connect(_trigger_game_over)
+	game.main_menu_requested.connect(_return_to_main_menu)
 	game.set_pause_visible(false)
 	game.set_flow_locked(false)
 	game.reset_run()
@@ -92,6 +93,7 @@ func _trigger_game_over() -> void:
 	if game == null:
 		return
 
+	var final_score: int = game.get_current_score()
 	_clear_game_over()
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.GAME_OVER)
 	game.lock_score()
@@ -106,6 +108,7 @@ func _trigger_game_over() -> void:
 
 	game_over_screen = GAME_OVER_SCENE.instantiate()
 	add_child(game_over_screen)
+	game_over_screen.set_final_score(final_score)
 	game_over_screen.restart_requested.connect(_restart_run)
 	game_over_screen.main_menu_requested.connect(_return_to_main_menu)
 
