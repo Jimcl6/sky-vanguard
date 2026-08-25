@@ -32,6 +32,7 @@ var _is_invulnerable := false
 var _invulnerability_time_remaining := 0.0
 var _shield_duration_remaining := 0.0
 var _shield_hits_remaining := 0
+var _feedback_manager: Node
 
 
 func _ready() -> void:
@@ -96,6 +97,14 @@ func set_projectile_container(container: Node) -> void:
 	weapon_controller.set_projectile_container(container)
 
 
+func set_feedback_manager(manager: Node) -> void:
+	_feedback_manager = manager
+
+
+func get_feedback_manager() -> Node:
+	return _feedback_manager
+
+
 func set_fire_enabled(should_enable: bool) -> void:
 	weapon_controller.set_fire_enabled(should_enable)
 
@@ -129,6 +138,8 @@ func activate_shield(duration: float = -1.0, hit_count: int = -1) -> void:
 	_shield_hits_remaining = resolved_hit_count
 	_apply_shield_visual()
 	_emit_shield_changed()
+	if _feedback_manager != null and _feedback_manager.has_method("play_shield_activate"):
+		_feedback_manager.call("play_shield_activate", self)
 
 
 func has_active_shield() -> bool:
@@ -172,6 +183,8 @@ func take_damage(amount: int) -> bool:
 		return false
 
 	if has_active_shield():
+		if _feedback_manager != null and _feedback_manager.has_method("play_shield_absorb"):
+			_feedback_manager.call("play_shield_absorb", self)
 		_absorb_damage_with_shield()
 		return true
 
@@ -180,9 +193,13 @@ func take_damage(amount: int) -> bool:
 
 	current_hp = int(clamp(current_hp - amount, 0, max_hp))
 	hp_changed.emit(current_hp, max_hp)
+	if _feedback_manager != null and _feedback_manager.has_method("play_player_damage"):
+		_feedback_manager.call("play_player_damage", self)
 
 	if current_hp == 0:
 		clear_invulnerability()
+		if _feedback_manager != null and _feedback_manager.has_method("play_player_death"):
+			_feedback_manager.call("play_player_death", global_position)
 		player_died.emit()
 	else:
 		_start_invulnerability()

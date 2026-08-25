@@ -24,6 +24,7 @@ var projectile_container: Node
 
 var _fire_cooldown := 0.0
 var _is_dead := false
+var _feedback_manager: Node
 
 
 func _ready() -> void:
@@ -57,6 +58,10 @@ func set_gameplay_enabled(should_enable: bool) -> void:
 	set_physics_process(can_move or can_fire)
 
 
+func set_feedback_manager(manager: Node) -> void:
+	_feedback_manager = manager
+
+
 func reset_health() -> void:
 	current_hp = max_hp
 	_is_dead = false
@@ -71,6 +76,8 @@ func take_damage(amount: int) -> bool:
 
 	if current_hp == 0:
 		_die()
+	else:
+		_play_hit_feedback()
 
 	return true
 
@@ -95,8 +102,19 @@ func _die() -> void:
 	can_move = false
 	can_receive_damage = false
 	can_fire = false
+	_play_destroyed_feedback()
 	died.emit(score_value)
 	queue_free()
+
+
+func _play_hit_feedback() -> void:
+	if _feedback_manager != null and _feedback_manager.has_method("play_enemy_hit"):
+		_feedback_manager.call("play_enemy_hit", self)
+
+
+func _play_destroyed_feedback() -> void:
+	if _feedback_manager != null and _feedback_manager.has_method("play_enemy_destroyed"):
+		_feedback_manager.call("play_enemy_destroyed", global_position)
 
 
 func _is_below_viewport() -> bool:

@@ -33,6 +33,7 @@ func collect_by_player(player: Node) -> bool:
 		return false
 
 	_was_collected = true
+	_play_collected_feedback(player)
 	queue_free()
 	return true
 
@@ -57,3 +58,12 @@ func _apply_placeholder_visual() -> void:
 			visual.color = Color(0.466667, 0.933333, 1.0, 1.0)
 		_:
 			visual.color = Color(1.0, 1.0, 1.0, 1.0)
+
+
+func _play_collected_feedback(player: Node) -> void:
+	if not player.has_method("get_feedback_manager"):
+		return
+
+	var feedback_manager: Variant = player.call("get_feedback_manager")
+	if feedback_manager != null and feedback_manager.has_method("play_booster_pickup_collected"):
+		feedback_manager.call("play_booster_pickup_collected", global_position, booster_id)

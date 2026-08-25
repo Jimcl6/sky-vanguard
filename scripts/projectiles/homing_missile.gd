@@ -20,6 +20,7 @@ var can_move := true
 var current_hp := 0
 var _age := 0.0
 var _has_finished := false
+var _feedback_manager: Node
 
 
 func _ready() -> void:
@@ -46,13 +47,17 @@ func set_movement_enabled(should_enable: bool) -> void:
 	set_physics_process(can_move)
 
 
+func set_feedback_manager(manager: Node) -> void:
+	_feedback_manager = manager
+
+
 func take_damage(amount: int) -> bool:
 	if amount <= 0 or _has_finished or current_hp <= 0:
 		return false
 
 	current_hp = maxi(current_hp - amount, 0)
 	if current_hp == 0:
-		_finish()
+		_finish(true)
 
 	return true
 
@@ -68,7 +73,7 @@ func _physics_process(delta: float) -> void:
 	_apply_armed_visual()
 
 	if _age >= lifetime or _is_outside_viewport():
-		_finish()
+		_finish(false)
 
 
 func _update_direction(delta: float) -> void:
@@ -124,13 +129,15 @@ func _try_damage_player(target_area: Node) -> void:
 	if did_damage != true:
 		return
 
-	_finish()
+	_finish(false)
 
 
-func _finish() -> void:
+func _finish(was_destroyed_by_player: bool) -> void:
 	if _has_finished:
 		return
 
 	_has_finished = true
 	can_move = false
+	if was_destroyed_by_player and _feedback_manager != null and _feedback_manager.has_method("play_homing_missile_destroyed"):
+		_feedback_manager.call("play_homing_missile_destroyed", global_position)
 	queue_free()

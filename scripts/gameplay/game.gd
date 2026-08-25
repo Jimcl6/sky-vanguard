@@ -42,11 +42,14 @@ const PHASE_7_TEST_BOOSTER := {
 @onready var enemy_container: Node2D = $World/EnemyContainer
 @onready var projectile_container: Node2D = $World/ProjectileContainer
 @onready var pickup_container: Node2D = $World/PickupContainer
+@onready var effect_container: Node2D = $World/EffectContainer
 @onready var score_system: Node = %ScoreSystem
 @onready var spawn_manager: Node = %SpawnManager
+@onready var feedback_manager: Node = %FeedbackManager
 
 
 func _ready() -> void:
+	feedback_manager.setup(effect_container)
 	hud.pause_requested.connect(_on_pause_requested)
 	trigger_game_over_button.pressed.connect(_on_trigger_game_over_button_pressed)
 	pause_menu.resume_requested.connect(_on_resume_requested)
@@ -57,6 +60,7 @@ func _ready() -> void:
 	player.weapon_changed.connect(hud.update_weapon)
 	player.shield_changed.connect(hud.update_shield)
 	player.set_projectile_container(projectile_container)
+	player.set_feedback_manager(feedback_manager)
 	spawn_manager.enemy_spawned.connect(_on_spawn_manager_enemy_spawned)
 	spawn_manager.setup(enemy_container, projectile_container, player)
 	reset_run()
@@ -98,6 +102,7 @@ func set_gameplay_enabled(should_enable: bool) -> void:
 	set_projectiles_movement_enabled(should_enable)
 	set_enemies_gameplay_enabled(should_enable)
 	spawn_manager.set_spawning_enabled(should_enable)
+	feedback_manager.set_feedback_enabled(should_enable)
 
 
 func set_projectiles_movement_enabled(should_enable: bool) -> void:
@@ -158,9 +163,11 @@ func reset_run() -> void:
 	clear_projectiles()
 	clear_enemies()
 	clear_pickups()
+	feedback_manager.clear_feedback()
 	score_system.reset_score()
 	player.reset_for_run(_get_player_start_position())
 	player.set_projectile_container(projectile_container)
+	player.set_feedback_manager(feedback_manager)
 	spawn_manager.reset_spawning()
 	_spawn_phase_6_test_pickups()
 	_spawn_phase_7_test_booster()
@@ -191,6 +198,8 @@ func _on_main_menu_requested() -> void:
 
 
 func _on_spawn_manager_enemy_spawned(enemy: Node) -> void:
+	if enemy.has_method("set_feedback_manager"):
+		enemy.set_feedback_manager(feedback_manager)
 	enemy.died.connect(_on_enemy_died)
 	if enemy.has_signal("drop_requested"):
 		enemy.drop_requested.connect(_on_enemy_drop_requested)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/gameplay/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="2_pause"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="4_hud"]
 [ext_resource type="Script" path="res://scripts/systems/score_system.gd" id="5_score"]
 [ext_resource type="Script" path="res://scripts/systems/spawn_manager.gd" id="6_spawn"]
+[ext_resource type="Script" path="res://scripts/systems/feedback_manager.gd" id="7_feedback"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug"]
 bg_color = Color(0.150000, 0.120000, 0.070000, 0.820000)
@@ -62,6 +63,10 @@ script = ExtResource("5_score")
 [node name="SpawnManager" type="Node" parent="Systems"]
 unique_name_in_owner = true
 script = ExtResource("6_spawn")
+
+[node name="FeedbackManager" type="Node" parent="Systems"]
+unique_name_in_owner = true
+script = ExtResource("7_feedback")
 
 [node name="DebugPanel" type="PanelContainer" parent="."]
 visible = false
