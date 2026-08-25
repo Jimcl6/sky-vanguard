@@ -4,15 +4,19 @@ const MAIN_MENU_SCENE := preload("res://scenes/ui/MainMenu.tscn")
 const GAME_SCENE := preload("res://scenes/gameplay/Game.tscn")
 const GAME_OVER_SCENE := preload("res://scenes/ui/GameOverScreen.tscn")
 const GAME_STATE_MANAGER_SCRIPT := preload("res://scripts/core/game_state_manager.gd")
+const SAVE_DATA_SCRIPT := preload("res://scripts/systems/save_data.gd")
 
 @onready var game_state_manager: Node = $GameStateManager
 
 var main_menu: Control
 var game: Control
 var game_over_screen: Control
+var save_data
 
 
 func _ready() -> void:
+	save_data = SAVE_DATA_SCRIPT.new()
+	save_data.load_data()
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.MAIN_MENU)
 	_show_main_menu()
 
@@ -49,6 +53,7 @@ func _show_main_menu() -> void:
 
 	main_menu = MAIN_MENU_SCENE.instantiate()
 	add_child(main_menu)
+	main_menu.set_best_score(save_data.get_best_score())
 	main_menu.start_requested.connect(_start_run)
 
 
@@ -94,6 +99,8 @@ func _trigger_game_over() -> void:
 		return
 
 	var final_score: int = game.get_current_score()
+	var did_set_new_best: bool = save_data.submit_score(final_score)
+	var best_score: int = save_data.get_best_score()
 	_clear_game_over()
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.GAME_OVER)
 	game.lock_score()
@@ -108,7 +115,7 @@ func _trigger_game_over() -> void:
 
 	game_over_screen = GAME_OVER_SCENE.instantiate()
 	add_child(game_over_screen)
-	game_over_screen.set_final_score(final_score)
+	game_over_screen.set_scores(final_score, best_score, did_set_new_best)
 	game_over_screen.restart_requested.connect(_restart_run)
 	game_over_screen.main_menu_requested.connect(_return_to_main_menu)
 
