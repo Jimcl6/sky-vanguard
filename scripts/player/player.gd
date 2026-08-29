@@ -15,7 +15,7 @@ signal shield_changed(is_active: bool, hits_remaining: int, duration_remaining: 
 @export var default_shield_duration := 5.0
 @export var default_shield_hit_count := 2
 
-@onready var visual: Polygon2D = $Visual
+@onready var visual: CanvasItem = $Visual
 @onready var shield_visual: Line2D = $ShieldVisual
 @onready var pickup_collector: Area2D = $PickupCollector
 @onready var weapon_controller: Node = $WeaponController

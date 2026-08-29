@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/gameplay/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="2_pause"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/systems/score_system.gd" id="5_score"]
 [ext_resource type="Script" path="res://scripts/systems/spawn_manager.gd" id="6_spawn"]
 [ext_resource type="Script" path="res://scripts/systems/feedback_manager.gd" id="7_feedback"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/sky_vertical_arcade.png" id="8_sky"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug"]
 bg_color = Color(0.150000, 0.120000, 0.070000, 0.820000)
@@ -30,7 +31,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_game")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -38,7 +39,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.0352941, 0.0470588, 0.0745098, 1)
+texture = ExtResource("8_sky")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="World" type="Node2D" parent="."]
 

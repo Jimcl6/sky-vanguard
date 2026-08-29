@@ -109,21 +109,21 @@ func _can_play() -> bool:
 	return _is_feedback_enabled and effect_container != null
 
 
-func _flash_child(owner: Node, child_name: String, flash_color: Color, duration: float) -> void:
-	var child := owner.get_node_or_null(child_name)
-	if not child is Polygon2D:
+func _flash_child(target_node: Node, child_name: String, flash_color: Color, duration: float) -> void:
+	var child := target_node.get_node_or_null(child_name)
+	if not child is CanvasItem:
 		return
 
-	var visual := child as Polygon2D
-	var original_color := visual.color
-	visual.color = flash_color
+	var visual := child as CanvasItem
+	var original_modulate := visual.modulate
+	visual.modulate = flash_color
 
 	var tween := visual.create_tween()
-	tween.tween_property(visual, "color", original_color, duration)
+	tween.tween_property(visual, "modulate", original_modulate, duration)
 
 
-func _pulse_child(owner: Node, child_name: String, scale_amount: float, duration: float) -> void:
-	var child := owner.get_node_or_null(child_name)
+func _pulse_child(target_node: Node, child_name: String, scale_amount: float, duration: float) -> void:
+	var child := target_node.get_node_or_null(child_name)
 	if not child is Node2D:
 		return
 
