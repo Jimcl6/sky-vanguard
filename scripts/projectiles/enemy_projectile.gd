@@ -42,6 +42,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	global_position += direction * speed * delta
+	rotation = direction.angle() - PI * 0.5
 	_age += delta
 
 	if _age >= lifetime or _is_outside_viewport():

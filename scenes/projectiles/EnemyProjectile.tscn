@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/projectiles/enemy_projectile.gd" id="1_projectile"]
+[ext_resource type="Texture2D" path="res://assets/sprites/projectiles/enemy_bullet_plasma.png" id="2_projectile_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_projectile"]
 radius = 9.0
@@ -12,9 +13,9 @@ monitoring = true
 monitorable = false
 script = ExtResource("1_projectile")
 
-[node name="Visual" type="Polygon2D" parent="."]
-color = Color(1, 0.823529, 0.278431, 1)
-polygon = PackedVector2Array(0, 16, 8, -8, 0, -16, -8, -8)
+[node name="Visual" type="Sprite2D" parent="."]
+scale = Vector2(0.0175, 0.0175)
+texture = ExtResource("2_projectile_sprite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_projectile")

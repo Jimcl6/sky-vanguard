@@ -10,7 +10,7 @@ const OFFSCREEN_MARGIN := 160.0
 @export var max_hp := 1
 @export var arming_delay := 0.4
 
-@onready var visual: Polygon2D = $Visual
+@onready var visual: CanvasItem = $Visual
 @onready var warning_visual: Line2D = $WarningVisual
 
 var target: Node2D
@@ -69,7 +69,7 @@ func _physics_process(delta: float) -> void:
 	_age += delta
 	_update_direction(delta)
 	global_position += direction * speed * delta
-	rotation = direction.angle() + PI * 0.5
+	rotation = direction.angle() - PI * 0.5
 	_apply_armed_visual()
 
 	if _age >= lifetime or _is_outside_viewport():
@@ -98,7 +98,7 @@ func _apply_armed_visual() -> void:
 		warning_visual.visible = not _is_armed()
 
 	if is_instance_valid(visual):
-		visual.color = Color(1.0, 0.34, 0.22, 1.0) if _is_armed() else Color(1.0, 0.78, 0.22, 1.0)
+		visual.modulate = Color(1.0, 0.34, 0.22, 1.0) if _is_armed() else Color(1.0, 0.78, 0.22, 1.0)
 
 
 func _is_outside_viewport() -> bool:

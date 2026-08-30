@@ -8,6 +8,7 @@ const WEAPON_PICKUP_COLOR := Color(0.39, 1.0, 0.58, 0.95)
 const BOOSTER_PICKUP_COLOR := Color(0.48, 0.92, 1.0, 0.95)
 const DEATH_COLOR := Color(1.0, 0.62, 0.24, 0.95)
 const MISSILE_DESTROYED_COLOR := Color(1.0, 0.34, 0.22, 0.95)
+const ENEMY_EXPLOSION_TEXTURE := preload("res://assets/sprites/effects/explosion_enemy_burst.png")
 
 var effect_container: Node2D
 var _is_feedback_enabled := false
@@ -78,6 +79,7 @@ func play_enemy_destroyed(position: Vector2) -> void:
 	if not _can_play():
 		return
 
+	_spawn_sprite_effect(position, ENEMY_EXPLOSION_TEXTURE, 0.058, 0.18, 1.16)
 	_spawn_cross(position, DEATH_COLOR, 36.0, 0.2)
 	_play_enemy_destroyed_audio()
 
@@ -181,6 +183,24 @@ func _spawn_line_effect(position: Vector2, points: PackedVector2Array, color: Co
 	var tween := effect.create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(effect, "scale", Vector2.ONE * scale_amount, duration)
+	tween.tween_property(effect, "modulate:a", 0.0, duration)
+	tween.chain().tween_callback(effect.queue_free)
+
+
+func _spawn_sprite_effect(position: Vector2, texture: Texture2D, base_scale: float, duration: float, scale_amount: float) -> void:
+	if effect_container == null:
+		return
+
+	var effect := Sprite2D.new()
+	effect.texture = texture
+	effect.scale = Vector2.ONE * base_scale
+	effect.modulate = Color(1.0, 1.0, 1.0, 0.95)
+	effect_container.add_child(effect)
+	effect.global_position = position
+
+	var tween := effect.create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(effect, "scale", Vector2.ONE * base_scale * scale_amount, duration)
 	tween.tween_property(effect, "modulate:a", 0.0, duration)
 	tween.chain().tween_callback(effect.queue_free)
 
