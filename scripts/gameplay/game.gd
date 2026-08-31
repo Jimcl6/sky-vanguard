@@ -229,6 +229,13 @@ func _on_enemy_drop_requested(drop_category: String, drop_id: String, drop_posit
 		push_warning("DropCarrier requested invalid drop: %s/%s" % [drop_category, drop_id])
 		return
 
+	call_deferred("_spawn_drop_pickup", drop_category, drop_id, drop_position)
+
+
+func _spawn_drop_pickup(drop_category: String, drop_id: String, drop_position: Vector2) -> void:
+	if pickup_container == null or not is_instance_valid(pickup_container):
+		return
+
 	var pickup: Node
 	match drop_category:
 		DROP_CATEGORY_WEAPON:
