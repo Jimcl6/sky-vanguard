@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/gameplay/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="2_pause"]
@@ -7,7 +7,8 @@
 [ext_resource type="Script" path="res://scripts/systems/score_system.gd" id="5_score"]
 [ext_resource type="Script" path="res://scripts/systems/spawn_manager.gd" id="6_spawn"]
 [ext_resource type="Script" path="res://scripts/systems/feedback_manager.gd" id="7_feedback"]
-[ext_resource type="Texture2D" path="res://assets/backgrounds/sky_vertical_arcade.png" id="8_sky"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/city_sky_top_down_arcade.png" id="8_sky"]
+[ext_resource type="Script" path="res://scripts/gameplay/background_scroller.gd" id="9_background"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug"]
 bg_color = Color(0.150000, 0.120000, 0.070000, 0.820000)
@@ -31,17 +32,21 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_game")
 
-[node name="Background" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+[node name="Background" type="Parallax2D" parent="."]
+unique_name_in_owner = true
+repeat_size = Vector2(0, 2560)
+repeat_times = 2
+script = ExtResource("9_background")
+
+[node name="City" type="Sprite2D" parent="Background"]
+position = Vector2(360, 640)
+scale = Vector2(0.765143, 0.76555)
 texture = ExtResource("8_sky")
-expand_mode = 1
-stretch_mode = 6
+
+[node name="CityMirrored" type="Sprite2D" parent="Background"]
+position = Vector2(360, 1920)
+scale = Vector2(0.765143, -0.76555)
+texture = ExtResource("8_sky")
 
 [node name="World" type="Node2D" parent="."]
 

@@ -36,6 +36,7 @@ const PHASE_7_TEST_BOOSTER := {
 }
 
 @onready var trigger_game_over_button: Button = %TriggerGameOverButton
+@onready var background: Parallax2D = %Background
 @onready var pause_menu: Control = %PauseMenu
 @onready var hud: Control = %HUD
 @onready var player: Node = %Player
@@ -95,6 +96,7 @@ func set_player_pickup_collection_enabled(should_enable: bool) -> void:
 
 
 func set_gameplay_enabled(should_enable: bool) -> void:
+	background.set_scrolling_enabled(should_enable)
 	set_player_movement_enabled(should_enable)
 	set_player_fire_enabled(should_enable)
 	set_player_damage_enabled(should_enable)
@@ -160,6 +162,7 @@ func get_current_score() -> int:
 
 
 func reset_run() -> void:
+	background.reset_scroll()
 	clear_projectiles()
 	clear_enemies()
 	clear_pickups()

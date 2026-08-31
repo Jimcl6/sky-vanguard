@@ -13,7 +13,7 @@ monitoring = false
 script = ExtResource("1_enemy")
 
 [node name="Visual" type="Sprite2D" parent="."]
-scale = Vector2(0.057, 0.057)
+scale = Vector2(0.0627, 0.0627)
 texture = ExtResource("2_enemy_sprite")
 
 [node name="Hurtbox" type="CollisionShape2D" parent="."]

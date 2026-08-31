@@ -2,6 +2,7 @@ extends Area2D
 class_name BoosterPickup
 
 const BOOSTER_TEMPORARY_SHIELD := "temporary_shield"
+const TEMPORARY_SHIELD_TEXTURE := preload("res://assets/sprites/pickups/booster_pickup_temporary_shield.png")
 const VALID_BOOSTER_IDS := [
 	BOOSTER_TEMPORARY_SHIELD,
 ]
@@ -11,14 +12,14 @@ const VALID_BOOSTER_IDS := [
 @export var shield_hit_count := 2
 @export var label_prefix := "Booster"
 
-@onready var visual: Polygon2D = $Visual
+@onready var visual: Sprite2D = $Visual
 @onready var label: Label = $Label
 
 var _was_collected := false
 
 
 func _ready() -> void:
-	_apply_placeholder_visual()
+	_apply_visual()
 
 
 func collect_by_player(player: Node) -> bool:
@@ -50,14 +51,14 @@ static func get_booster_display_name(candidate_booster_id: String) -> String:
 			return "Unknown Booster"
 
 
-func _apply_placeholder_visual() -> void:
+func _apply_visual() -> void:
 	label.text = "%s: %s" % [label_prefix, get_booster_display_name(booster_id)]
 
 	match booster_id:
 		BOOSTER_TEMPORARY_SHIELD:
-			visual.color = Color(0.466667, 0.933333, 1.0, 1.0)
+			visual.texture = TEMPORARY_SHIELD_TEXTURE
 		_:
-			visual.color = Color(1.0, 1.0, 1.0, 1.0)
+			visual.texture = null
 
 
 func _play_collected_feedback(player: Node) -> void:

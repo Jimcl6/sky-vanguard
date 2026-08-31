@@ -3,6 +3,8 @@ class_name WeaponPickup
 
 const WEAPON_BASIC_BLASTER := "basic_blaster"
 const WEAPON_SPREAD_SHOT := "spread_shot"
+const BASIC_BLASTER_TEXTURE := preload("res://assets/sprites/pickups/weapon_pickup_basic_blaster.png")
+const SPREAD_SHOT_TEXTURE := preload("res://assets/sprites/pickups/weapon_pickup_spread_shot.png")
 const VALID_WEAPON_IDS := [
 	WEAPON_BASIC_BLASTER,
 	WEAPON_SPREAD_SHOT,
@@ -11,14 +13,14 @@ const VALID_WEAPON_IDS := [
 @export_enum("basic_blaster", "spread_shot") var weapon_id := WEAPON_SPREAD_SHOT
 @export var label_prefix := "Weapon"
 
-@onready var visual: Polygon2D = $Visual
+@onready var visual: Sprite2D = $Visual
 @onready var label: Label = $Label
 
 var _was_collected := false
 
 
 func _ready() -> void:
-	_apply_placeholder_visual()
+	_apply_visual()
 
 
 func collect_by_player(player: Node) -> bool:
@@ -52,16 +54,16 @@ static func get_weapon_display_name(candidate_weapon_id: String) -> String:
 			return "Unknown Weapon"
 
 
-func _apply_placeholder_visual() -> void:
+func _apply_visual() -> void:
 	label.text = "%s: %s" % [label_prefix, get_weapon_display_name(weapon_id)]
 
 	match weapon_id:
 		WEAPON_BASIC_BLASTER:
-			visual.color = Color(0.313726, 0.847059, 1.0, 1.0)
+			visual.texture = BASIC_BLASTER_TEXTURE
 		WEAPON_SPREAD_SHOT:
-			visual.color = Color(0.392157, 1.0, 0.584314, 1.0)
+			visual.texture = SPREAD_SHOT_TEXTURE
 		_:
-			visual.color = Color(1.0, 1.0, 1.0, 1.0)
+			visual.texture = null
 
 
 func _play_collected_feedback(player: Node) -> void:
