@@ -8,7 +8,7 @@ const HOMING_MISSILE_SCENE := preload("res://scenes/projectiles/HomingMissile.ts
 
 @export var max_hp := 4
 @export var speed := 70.0
-@export var score_value := 250
+@export var score_value := 300
 @export var missile_launch_interval := 2.6
 @export var missile_warning_duration := 0.45
 @export var active_missile_limit := 2
@@ -27,6 +27,7 @@ var _fire_cooldown := 0.0
 var _warning_time_remaining := 0.0
 var _is_dead := false
 var _feedback_manager: Node
+var _audio_manager: Node
 
 
 func _ready() -> void:
@@ -68,6 +69,10 @@ func set_gameplay_enabled(should_enable: bool) -> void:
 
 func set_feedback_manager(manager: Node) -> void:
 	_feedback_manager = manager
+
+
+func set_audio_manager(manager: Node) -> void:
+	_audio_manager = manager
 
 
 func reset_health() -> void:
@@ -124,6 +129,9 @@ func _launch_homing_missile() -> void:
 		missile.configure(target, launch_direction)
 	if missile.has_method("set_feedback_manager"):
 		missile.set_feedback_manager(_feedback_manager)
+
+	if _audio_manager != null and _audio_manager.has_method("play_enemy_fire_sfx"):
+		_audio_manager.call("play_enemy_fire_sfx")
 
 
 func _get_active_missile_count() -> int:

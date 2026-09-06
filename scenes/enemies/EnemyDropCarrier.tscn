@@ -1,20 +1,21 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://bsg835v3ar7ah"]
 
-[ext_resource type="Script" path="res://scripts/enemies/enemy_drop_carrier.gd" id="1_enemy"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/enemy_drop_carrier_intimidating.png" id="2_enemy_sprite"]
+[ext_resource type="Script" uid="uid://c6jxvbdvaiqjj" path="res://scripts/enemies/enemy_drop_carrier.gd" id="1_enemy"]
+[ext_resource type="Texture2D" uid="uid://cqgc8oq0j1blx" path="res://assets/sprites/enemies/enemy_drop_carrier_intimidating.png" id="2_enemy_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hurtbox"]
 radius = 34.0
 
-[node name="EnemyDropCarrier" type="Area2D"]
+[node name="EnemyDropCarrier" type="Area2D" unique_id=1647712935]
 collision_layer = 4
 collision_mask = 0
 monitoring = false
 script = ExtResource("1_enemy")
+score_value = 250
 
-[node name="Visual" type="Sprite2D" parent="."]
-scale = Vector2(0.0671, 0.0671)
+[node name="Visual" type="Sprite2D" parent="." unique_id=660647969]
+scale = Vector2(0.10736, 0.10736)
 texture = ExtResource("2_enemy_sprite")
 
-[node name="Hurtbox" type="CollisionShape2D" parent="."]
+[node name="Hurtbox" type="CollisionShape2D" parent="." unique_id=885247297]
 shape = SubResource("CircleShape2D_hurtbox")

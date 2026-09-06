@@ -13,7 +13,7 @@ monitoring = true
 script = ExtResource("1_missile")
 
 [node name="Visual" type="Sprite2D" parent="."]
-scale = Vector2(0.031, 0.031)
+scale = Vector2(0.04185, 0.04185)
 texture = ExtResource("2_missile_sprite")
 
 [node name="WarningVisual" type="Line2D" parent="."]

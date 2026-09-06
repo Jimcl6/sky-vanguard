@@ -23,6 +23,7 @@ var can_fire := false
 var projectile_container: Node
 
 var _fire_cooldown := 0.0
+var _audio_manager: Node
 
 
 func _ready() -> void:
@@ -44,6 +45,10 @@ func _physics_process(delta: float) -> void:
 
 func set_projectile_container(container: Node) -> void:
 	projectile_container = container
+
+
+func set_audio_manager(manager: Node) -> void:
+	_audio_manager = manager
 
 
 func set_fire_enabled(should_enable: bool) -> void:
@@ -99,6 +104,9 @@ func _fire_current_weapon() -> void:
 			_fire_spread_shot()
 		_:
 			_fire_basic_blaster()
+
+	if _audio_manager != null and _audio_manager.has_method("play_player_fire_sfx"):
+		_audio_manager.call("play_player_fire_sfx")
 
 
 func _get_current_fire_interval() -> float:

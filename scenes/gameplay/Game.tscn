@@ -1,28 +1,16 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene format=3 uid="uid://c5a0tvs7x2826"]
 
-[ext_resource type="Script" path="res://scripts/gameplay/game.gd" id="1_game"]
+[ext_resource type="Script" uid="uid://bsd4ksiop0yxg" path="res://scripts/gameplay/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="2_pause"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="3_player"]
 [ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="4_hud"]
-[ext_resource type="Script" path="res://scripts/systems/score_system.gd" id="5_score"]
-[ext_resource type="Script" path="res://scripts/systems/spawn_manager.gd" id="6_spawn"]
-[ext_resource type="Script" path="res://scripts/systems/feedback_manager.gd" id="7_feedback"]
-[ext_resource type="Texture2D" path="res://assets/backgrounds/city_sky_top_down_arcade.png" id="8_sky"]
-[ext_resource type="Script" path="res://scripts/gameplay/background_scroller.gd" id="9_background"]
+[ext_resource type="Script" uid="uid://cjf3j54ipoau2" path="res://scripts/systems/score_system.gd" id="5_score"]
+[ext_resource type="Script" uid="uid://by8xcxqfjpste" path="res://scripts/systems/spawn_manager.gd" id="6_spawn"]
+[ext_resource type="Script" uid="uid://dq2bxu28n3xhd" path="res://scripts/systems/feedback_manager.gd" id="7_feedback"]
+[ext_resource type="Texture2D" uid="uid://bwf76fxnk34sw" path="res://assets/backgrounds/city_sky_top_down_arcade.png" id="8_sky"]
+[ext_resource type="Script" uid="uid://cojb60pcm42nl" path="res://scripts/gameplay/background_scroller.gd" id="9_background"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug"]
-bg_color = Color(0.150000, 0.120000, 0.070000, 0.820000)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(1.000000, 0.760000, 0.320000, 0.600000)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[node name="Game" type="Control"]
+[node name="Game" type="Control" unique_id=1981606877]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,80 +20,59 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_game")
 
-[node name="Background" type="Parallax2D" parent="."]
+[node name="Background" type="Parallax2D" parent="." unique_id=235684748]
 unique_name_in_owner = true
 repeat_size = Vector2(0, 2560)
 repeat_times = 2
 script = ExtResource("9_background")
+scroll_speed = 150.0
 
-[node name="City" type="Sprite2D" parent="Background"]
+[node name="City" type="Sprite2D" parent="Background" unique_id=1795075800]
 position = Vector2(360, 640)
 scale = Vector2(0.765143, 0.76555)
 texture = ExtResource("8_sky")
 
-[node name="CityMirrored" type="Sprite2D" parent="Background"]
+[node name="CityMirrored" type="Sprite2D" parent="Background" unique_id=1725586580]
 position = Vector2(360, 1920)
 scale = Vector2(0.765143, -0.76555)
 texture = ExtResource("8_sky")
 
-[node name="World" type="Node2D" parent="."]
+[node name="World" type="Node2D" parent="." unique_id=1615308981]
 
-[node name="Player" parent="World" instance=ExtResource("3_player")]
+[node name="Player" parent="World" unique_id=383905810 instance=ExtResource("3_player")]
 unique_name_in_owner = true
 position = Vector2(360, 1152)
+max_hp = 5
+touch_radius = 150.0
+invulnerability_duration = 1.5
 
-[node name="EnemyContainer" type="Node2D" parent="World"]
+[node name="EnemyContainer" type="Node2D" parent="World" unique_id=1934585311]
 
-[node name="ProjectileContainer" type="Node2D" parent="World"]
+[node name="ProjectileContainer" type="Node2D" parent="World" unique_id=187285337]
 
-[node name="PickupContainer" type="Node2D" parent="World"]
+[node name="PickupContainer" type="Node2D" parent="World" unique_id=1001021526]
 
-[node name="EffectContainer" type="Node2D" parent="World"]
+[node name="EffectContainer" type="Node2D" parent="World" unique_id=136401405]
 
-[node name="Systems" type="Node" parent="."]
+[node name="Systems" type="Node" parent="." unique_id=1105138022]
 
-[node name="ScoreSystem" type="Node" parent="Systems"]
+[node name="ScoreSystem" type="Node" parent="Systems" unique_id=580894748]
 unique_name_in_owner = true
 script = ExtResource("5_score")
 
-[node name="SpawnManager" type="Node" parent="Systems"]
+[node name="SpawnManager" type="Node" parent="Systems" unique_id=1476129863]
 unique_name_in_owner = true
 script = ExtResource("6_spawn")
 
-[node name="FeedbackManager" type="Node" parent="Systems"]
+[node name="FeedbackManager" type="Node" parent="Systems" unique_id=610492745]
 unique_name_in_owner = true
 script = ExtResource("7_feedback")
 
-[node name="DebugPanel" type="PanelContainer" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -172.0
-offset_top = 116.0
-offset_right = -18.0
-offset_bottom = 178.0
-grow_horizontal = 0
-mouse_filter = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_debug")
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=2010351717]
 
-[node name="DebugContent" type="VBoxContainer" parent="DebugPanel"]
-layout_mode = 2
-theme_override_constants/separation = 6
-alignment = 1
-
-[node name="TriggerGameOverButton" type="Button" parent="DebugPanel/DebugContent"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(132, 44)
-layout_mode = 2
-text = "Trigger Game Over"
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="HUD" parent="CanvasLayer" instance=ExtResource("4_hud")]
+[node name="HUD" parent="CanvasLayer" unique_id=1437716192 instance=ExtResource("4_hud")]
 unique_name_in_owner = true
 
-[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("2_pause")]
+[node name="PauseMenu" parent="CanvasLayer" unique_id=121199739 instance=ExtResource("2_pause")]
 unique_name_in_owner = true
 visible = false

@@ -14,7 +14,7 @@ monitorable = false
 script = ExtResource("1_projectile")
 
 [node name="Visual" type="Sprite2D" parent="."]
-scale = Vector2(0.0175, 0.0175)
+scale = Vector2(0.023625, 0.023625)
 texture = ExtResource("2_projectile_sprite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

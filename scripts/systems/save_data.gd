@@ -6,6 +6,7 @@ const SAVE_PATH := "user://save_data.json"
 const DEFAULT_SETTINGS := {
 	"sound_enabled": true,
 	"music_enabled": true,
+	"haptics_enabled": true,
 	"screen_shake_enabled": true,
 }
 
@@ -61,6 +62,18 @@ func get_best_score() -> int:
 
 func get_settings() -> Dictionary:
 	return settings.duplicate(true)
+
+
+func set_setting(setting_name: String, value: Variant) -> void:
+	if not DEFAULT_SETTINGS.has(setting_name):
+		return
+
+	var default_value: Variant = DEFAULT_SETTINGS[setting_name]
+	if typeof(value) != typeof(default_value):
+		return
+
+	settings[setting_name] = value
+	save_data()
 
 
 func submit_score(score: int) -> bool:

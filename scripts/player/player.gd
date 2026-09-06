@@ -101,6 +101,11 @@ func set_feedback_manager(manager: Node) -> void:
 	_feedback_manager = manager
 
 
+func set_audio_manager(manager: Node) -> void:
+	if weapon_controller != null and weapon_controller.has_method("set_audio_manager"):
+		weapon_controller.call("set_audio_manager", manager)
+
+
 func get_feedback_manager() -> Node:
 	return _feedback_manager
 
@@ -191,7 +196,11 @@ func take_damage(amount: int) -> bool:
 	if _is_invulnerable:
 		return true
 
+	var previous_hp := current_hp
 	current_hp = int(clamp(current_hp - amount, 0, max_hp))
+	if current_hp >= previous_hp:
+		return false
+
 	hp_changed.emit(current_hp, max_hp)
 	if _feedback_manager != null and _feedback_manager.has_method("play_player_damage"):
 		_feedback_manager.call("play_player_damage", self)

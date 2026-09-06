@@ -3,32 +3,34 @@
 [ext_resource type="Script" path="res://scripts/ui/game_over_screen.gd" id="1_game_over"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.050000, 0.045000, 0.070000, 0.950000)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1.000000, 0.420000, 0.320000, 0.850000)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+bg_color = Color(0.027451, 0.019608, 0.031373, 0.970000)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1.000000, 0.341176, 0.254902, 0.960000)
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0
+shadow_color = Color(0, 0, 0, 0.60)
+shadow_size = 10
 content_margin_left = 36.0
 content_margin_top = 34.0
 content_margin_right = 36.0
 content_margin_bottom = 34.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
-bg_color = Color(0.540000, 0.160000, 0.140000, 0.950000)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1.000000, 0.760000, 0.640000, 0.850000)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+bg_color = Color(0.560784, 0.113725, 0.105882, 0.980000)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1.000000, 0.768627, 0.623529, 0.980000)
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0
 
 [node name="GameOverScreen" type="Control"]
 layout_mode = 3
@@ -70,6 +72,10 @@ alignment = 1
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/Panel/GameOverContent"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1.000000, 0.933333, 0.901961, 1.000000)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
 theme_override_font_sizes/font_size = 44
 text = "GAME OVER"
 horizontal_alignment = 1
@@ -77,6 +83,10 @@ horizontal_alignment = 1
 [node name="FinalScoreLabel" type="Label" parent="CenterContainer/Panel/GameOverContent"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(1.000000, 0.956863, 0.819608, 1.000000)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 28
 text = "Final Score 0"
 horizontal_alignment = 1
@@ -84,6 +94,10 @@ horizontal_alignment = 1
 [node name="BestScoreLabel" type="Label" parent="CenterContainer/Panel/GameOverContent"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(1.000000, 0.956863, 0.819608, 1.000000)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 26
 text = "Best Score 0"
 horizontal_alignment = 1
@@ -93,6 +107,9 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.941176, 0.313726, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 26
 text = "New Best!"
 horizontal_alignment = 1
@@ -105,11 +122,14 @@ theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
-text = "Restart"
+text = "RESTART"
 
 [node name="MainMenuButton" type="Button" parent="CenterContainer/Panel/GameOverContent"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 68)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "Main Menu"
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
+text = "MAIN MENU"

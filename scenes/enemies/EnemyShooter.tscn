@@ -1,23 +1,25 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://bqc5sy025nsy"]
 
-[ext_resource type="Script" path="res://scripts/enemies/enemy_shooter.gd" id="1_enemy"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/enemy_shooter_intimidating.png" id="2_enemy_sprite"]
+[ext_resource type="Script" uid="uid://gpaalm6yrbgl" path="res://scripts/enemies/enemy_shooter.gd" id="1_enemy"]
+[ext_resource type="Texture2D" uid="uid://x1kgj653eh6n" path="res://assets/sprites/enemies/enemy_shooter_intimidating.png" id="2_enemy_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hurtbox"]
 radius = 30.0
 
-[node name="EnemyShooter" type="Area2D"]
+[node name="EnemyShooter" type="Area2D" unique_id=1665910494]
 collision_layer = 4
 collision_mask = 0
 monitoring = false
 script = ExtResource("1_enemy")
+speed = 180.0
+score_value = 150
 
-[node name="Visual" type="Sprite2D" parent="."]
-scale = Vector2(0.0627, 0.0627)
+[node name="Visual" type="Sprite2D" parent="." unique_id=2066002853]
+scale = Vector2(0.10032, 0.10032)
 texture = ExtResource("2_enemy_sprite")
 
-[node name="Hurtbox" type="CollisionShape2D" parent="."]
+[node name="Hurtbox" type="CollisionShape2D" parent="." unique_id=772953298]
 shape = SubResource("CircleShape2D_hurtbox")
 
-[node name="FirePoint" type="Marker2D" parent="."]
+[node name="FirePoint" type="Marker2D" parent="." unique_id=1100291636]
 position = Vector2(0, 34)

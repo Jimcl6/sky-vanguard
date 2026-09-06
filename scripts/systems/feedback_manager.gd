@@ -1,6 +1,8 @@
 extends Node
 class_name FeedbackManager
 
+signal damage_camera_shake_requested
+
 const HIT_FLASH_COLOR := Color(1.0, 1.0, 1.0, 1.0)
 const PLAYER_DAMAGE_COLOR := Color(1.0, 0.2, 0.18, 1.0)
 const SHIELD_COLOR := Color(0.46, 0.93, 1.0, 0.95)
@@ -9,13 +11,24 @@ const BOOSTER_PICKUP_COLOR := Color(0.48, 0.92, 1.0, 0.95)
 const DEATH_COLOR := Color(1.0, 0.62, 0.24, 0.95)
 const MISSILE_DESTROYED_COLOR := Color(1.0, 0.34, 0.22, 0.95)
 const ENEMY_EXPLOSION_TEXTURE := preload("res://assets/sprites/effects/explosion_enemy_burst.png")
+const DAMAGE_HAPTIC_DURATION_MS := 50
 
 var effect_container: Node2D
 var _is_feedback_enabled := false
+var _audio_manager: Node
+var _haptics_enabled := true
 
 
 func setup(target_effect_container: Node2D) -> void:
 	effect_container = target_effect_container
+
+
+func set_audio_manager(manager: Node) -> void:
+	_audio_manager = manager
+
+
+func set_haptics_enabled(should_enable: bool) -> void:
+	_haptics_enabled = should_enable
 
 
 func set_feedback_enabled(should_enable: bool) -> void:
@@ -40,6 +53,8 @@ func play_player_damage(player: Node) -> void:
 	_flash_child(player, "Visual", PLAYER_DAMAGE_COLOR, 0.12)
 	_spawn_ring(player.global_position, PLAYER_DAMAGE_COLOR, 36.0, 0.18)
 	_play_player_damage_audio()
+	damage_camera_shake_requested.emit()
+	_play_damage_haptic()
 
 
 func play_player_death(position: Vector2) -> void:
@@ -47,6 +62,7 @@ func play_player_death(position: Vector2) -> void:
 		return
 
 	_spawn_cross(position, PLAYER_DAMAGE_COLOR, 42.0, 0.22)
+	_play_player_death_audio()
 
 
 func play_shield_activate(player: Node) -> void:
@@ -89,7 +105,7 @@ func play_weapon_pickup_collected(position: Vector2, _weapon_id: String) -> void
 		return
 
 	_spawn_diamond(position, WEAPON_PICKUP_COLOR, 34.0, 0.2)
-	_play_pickup_audio()
+	_play_weapon_pickup_audio()
 
 
 func play_booster_pickup_collected(position: Vector2, _booster_id: String) -> void:
@@ -97,7 +113,7 @@ func play_booster_pickup_collected(position: Vector2, _booster_id: String) -> vo
 		return
 
 	_spawn_ring(position, BOOSTER_PICKUP_COLOR, 42.0, 0.2)
-	_play_pickup_audio()
+	_play_booster_pickup_audio()
 
 
 func play_homing_missile_destroyed(position: Vector2) -> void:
@@ -206,16 +222,39 @@ func _spawn_sprite_effect(position: Vector2, texture: Texture2D, base_scale: flo
 
 
 func _play_player_damage_audio() -> void:
-	pass
+	if _audio_manager != null and _audio_manager.has_method("play_player_damage_sfx"):
+		_audio_manager.call("play_player_damage_sfx")
+
+
+func _play_damage_haptic() -> void:
+	if not _haptics_enabled:
+		return
+	if not OS.has_feature("android"):
+		return
+
+	Input.vibrate_handheld(DAMAGE_HAPTIC_DURATION_MS)
 
 
 func _play_shield_absorb_audio() -> void:
-	pass
+	if _audio_manager != null and _audio_manager.has_method("play_shield_absorb_sfx"):
+		_audio_manager.call("play_shield_absorb_sfx")
+
+
+func _play_player_death_audio() -> void:
+	if _audio_manager != null and _audio_manager.has_method("play_game_over_sfx"):
+		_audio_manager.call("play_game_over_sfx")
 
 
 func _play_enemy_destroyed_audio() -> void:
-	pass
+	if _audio_manager != null and _audio_manager.has_method("play_enemy_destroyed_sfx"):
+		_audio_manager.call("play_enemy_destroyed_sfx")
 
 
-func _play_pickup_audio() -> void:
-	pass
+func _play_weapon_pickup_audio() -> void:
+	if _audio_manager != null and _audio_manager.has_method("play_weapon_pickup_sfx"):
+		_audio_manager.call("play_weapon_pickup_sfx")
+
+
+func _play_booster_pickup_audio() -> void:
+	if _audio_manager != null and _audio_manager.has_method("play_booster_pickup_sfx"):
+		_audio_manager.call("play_booster_pickup_sfx")

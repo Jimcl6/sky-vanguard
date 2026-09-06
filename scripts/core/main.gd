@@ -7,6 +7,7 @@ const GAME_STATE_MANAGER_SCRIPT := preload("res://scripts/core/game_state_manage
 const SAVE_DATA_SCRIPT := preload("res://scripts/systems/save_data.gd")
 
 @onready var game_state_manager: Node = $GameStateManager
+@onready var audio_manager: Node = $AudioManager
 
 var main_menu: Control
 var game: Control
@@ -17,6 +18,7 @@ var save_data
 func _ready() -> void:
 	save_data = SAVE_DATA_SCRIPT.new()
 	save_data.load_data()
+	audio_manager.apply_settings(save_data.get_settings())
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.MAIN_MENU)
 	_show_main_menu()
 
@@ -35,9 +37,6 @@ func _unhandled_input(event: InputEvent) -> void:
 				_pause_run()
 			elif game_state_manager.current_state == GAME_STATE_MANAGER_SCRIPT.State.PAUSED:
 				_resume_run()
-		KEY_G:
-			if game_state_manager.current_state == GAME_STATE_MANAGER_SCRIPT.State.PLAYING:
-				_trigger_game_over()
 		KEY_R:
 			if game_state_manager.current_state == GAME_STATE_MANAGER_SCRIPT.State.GAME_OVER:
 				_restart_run()
@@ -54,16 +53,27 @@ func _show_main_menu() -> void:
 	main_menu = MAIN_MENU_SCENE.instantiate()
 	add_child(main_menu)
 	main_menu.set_best_score(save_data.get_best_score())
+	main_menu.set_settings(save_data.get_settings())
 	main_menu.start_requested.connect(_start_run)
+	main_menu.settings_button_pressed.connect(_on_main_menu_settings_button_pressed)
+	main_menu.settings_back_pressed.connect(_on_main_menu_settings_back_pressed)
+	main_menu.setting_changed.connect(_on_main_menu_setting_changed)
+	audio_manager.play_menu_bgm()
 
 
-func _start_run() -> void:
+func _start_run(play_button_sfx := true) -> void:
+	if play_button_sfx:
+		audio_manager.play_button_sfx()
 	_clear_main_menu()
 	_clear_game_over()
 
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.STARTING_RUN)
 	game = GAME_SCENE.instantiate()
 	add_child(game)
+	var settings: Dictionary = save_data.get_settings()
+	game.set_audio_manager(audio_manager)
+	game.set_screen_shake_enabled(bool(settings.get("screen_shake_enabled", true)))
+	game.set_haptics_enabled(bool(settings.get("haptics_enabled", true)))
 	game.pause_requested.connect(_pause_run)
 	game.resume_requested.connect(_resume_run)
 	game.game_over_requested.connect(_trigger_game_over)
@@ -74,12 +84,15 @@ func _start_run() -> void:
 	game.set_gameplay_enabled(false)
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.PLAYING)
 	game.set_gameplay_enabled(game_state_manager.is_gameplay_allowed())
+	audio_manager.play_gameplay_bgm()
 
 
 func _pause_run() -> void:
 	if game == null:
 		return
 
+	audio_manager.play_pause_sfx()
+	audio_manager.pause_gameplay_bgm()
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.PAUSED)
 	game.set_gameplay_enabled(false)
 	game.set_pause_visible(true)
@@ -89,9 +102,11 @@ func _resume_run() -> void:
 	if game == null:
 		return
 
+	audio_manager.play_resume_sfx()
 	game.set_pause_visible(false)
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.PLAYING)
 	game.set_gameplay_enabled(game_state_manager.is_gameplay_allowed())
+	audio_manager.resume_gameplay_bgm()
 
 
 func _trigger_game_over() -> void:
@@ -121,18 +136,55 @@ func _trigger_game_over() -> void:
 
 
 func _restart_run() -> void:
+	audio_manager.play_button_sfx()
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.RESTARTING)
 	_clear_game()
 	_clear_game_over()
-	_start_run()
+	_start_run(false)
 
 
 func _return_to_main_menu() -> void:
+	audio_manager.play_button_sfx()
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.RETURNING_TO_MENU)
 	_clear_game()
 	_clear_game_over()
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.MAIN_MENU)
 	_show_main_menu()
+
+
+func _on_main_menu_settings_button_pressed() -> void:
+	audio_manager.play_button_sfx()
+
+
+func _on_main_menu_settings_back_pressed() -> void:
+	audio_manager.play_button_sfx()
+
+
+func _on_main_menu_setting_changed(setting_name: String, value: bool) -> void:
+	save_data.set_setting(setting_name, value)
+	var settings: Dictionary = save_data.get_settings()
+	audio_manager.apply_settings(settings)
+	if game != null:
+		game.set_haptics_enabled(bool(settings.get("haptics_enabled", true)))
+		game.set_screen_shake_enabled(bool(settings.get("screen_shake_enabled", true)))
+	_restore_bgm_for_current_state()
+
+
+func _restore_bgm_for_current_state() -> void:
+	var settings: Dictionary = save_data.get_settings()
+	if not bool(settings.get("music_enabled", true)):
+		return
+
+	if game_state_manager.current_state == GAME_STATE_MANAGER_SCRIPT.State.MAIN_MENU:
+		audio_manager.play_menu_bgm()
+	elif game_state_manager.current_state in [
+		GAME_STATE_MANAGER_SCRIPT.State.PLAYING,
+		GAME_STATE_MANAGER_SCRIPT.State.PAUSED,
+		GAME_STATE_MANAGER_SCRIPT.State.GAME_OVER,
+		GAME_STATE_MANAGER_SCRIPT.State.STARTING_RUN,
+		GAME_STATE_MANAGER_SCRIPT.State.RESTARTING,
+	]:
+		audio_manager.play_gameplay_bgm()
 
 
 func _clear_main_menu() -> void:

@@ -7,8 +7,8 @@ signal drop_requested(drop_category: String, drop_id: String, drop_position: Vec
 const OFFSCREEN_MARGIN := 96.0
 
 @export var max_hp := 4
-@export var speed := 80.0
-@export var score_value := 200
+@export var speed := 96.0
+@export var score_value := 250
 @export_enum("weapon", "booster") var drop_category := "weapon"
 @export var drop_id := "spread_shot"
 

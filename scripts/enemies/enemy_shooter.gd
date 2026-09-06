@@ -25,6 +25,7 @@ var projectile_container: Node
 var _fire_cooldown := 0.0
 var _is_dead := false
 var _feedback_manager: Node
+var _audio_manager: Node
 
 
 func _ready() -> void:
@@ -62,6 +63,10 @@ func set_feedback_manager(manager: Node) -> void:
 	_feedback_manager = manager
 
 
+func set_audio_manager(manager: Node) -> void:
+	_audio_manager = manager
+
+
 func reset_health() -> void:
 	current_hp = max_hp
 	_is_dead = false
@@ -92,6 +97,9 @@ func _fire_enemy_projectile() -> void:
 
 	if projectile.has_method("configure"):
 		projectile.configure(Vector2.DOWN, projectile_speed, projectile_lifetime, projectile_damage)
+
+	if _audio_manager != null and _audio_manager.has_method("play_enemy_fire_sfx"):
+		_audio_manager.call("play_enemy_fire_sfx")
 
 
 func _die() -> void:

@@ -1,34 +1,40 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/city_sky_top_down_arcade.png" id="2_city"]
+[ext_resource type="Script" path="res://scripts/gameplay/background_scroller.gd" id="3_scroll"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.025000, 0.040000, 0.070000, 0.820000)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.240000, 0.620000, 0.760000, 0.720000)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+bg_color = Color(0.015686, 0.023529, 0.039216, 0.900000)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.180392, 0.894118, 1.000000, 0.920000)
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 10
 content_margin_left = 38.0
 content_margin_top = 38.0
 content_margin_right = 38.0
 content_margin_bottom = 38.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
-bg_color = Color(0.100000, 0.420000, 0.560000, 0.960000)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.680000, 0.930000, 1.000000, 0.850000)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+bg_color = Color(0.043137, 0.333333, 0.560784, 0.980000)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.721569, 0.956863, 1.000000, 0.980000)
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 6
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -48,6 +54,33 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.026000, 0.043000, 0.074000, 1.000000)
 
+[node name="MenuParallax" type="Parallax2D" parent="."]
+unique_name_in_owner = true
+repeat_size = Vector2(0, 2560)
+repeat_times = 2
+script = ExtResource("3_scroll")
+scroll_speed = 42.0
+
+[node name="City" type="Sprite2D" parent="MenuParallax"]
+position = Vector2(360, 640)
+scale = Vector2(0.765143, 0.76555)
+texture = ExtResource("2_city")
+
+[node name="CityMirrored" type="Sprite2D" parent="MenuParallax"]
+position = Vector2(360, 1920)
+scale = Vector2(0.765143, -0.76555)
+texture = ExtResource("2_city")
+
+[node name="ReadabilityOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.000000, 0.000000, 0.000000, 0.420000)
+
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -57,7 +90,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Panel" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(480, 420)
+custom_minimum_size = Vector2(480, 520)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
@@ -68,12 +101,20 @@ alignment = 1
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/Panel/MenuContent"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.870588, 0.972549, 1.000000, 1.000000)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
 theme_override_font_sizes/font_size = 52
 text = "Sky Vanguard"
 horizontal_alignment = 1
 
 [node name="SubtitleLabel" type="Label" parent="CenterContainer/Panel/MenuContent"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.658824, 0.894118, 1.000000, 1.000000)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 24
 text = "Prototype"
 horizontal_alignment = 1
@@ -81,6 +122,10 @@ horizontal_alignment = 1
 [node name="BestScoreLabel" type="Label" parent="CenterContainer/Panel/MenuContent"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(1.000000, 0.956863, 0.690196, 1.000000)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 26
 text = "Best Score: 0"
 horizontal_alignment = 1
@@ -93,4 +138,76 @@ theme_override_font_sizes/font_size = 26
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
-text = "Start"
+text = "START"
+
+[node name="SettingsButton" type="Button" parent="CenterContainer/Panel/MenuContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 72)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
+text = "SETTINGS"
+
+[node name="SettingsPanel" type="PanelContainer" parent="CenterContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(520, 560)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="SettingsContent" type="VBoxContainer" parent="CenterContainer/SettingsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 22
+alignment = 1
+
+[node name="SettingsTitleLabel" type="Label" parent="CenterContainer/SettingsPanel/SettingsContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.870588, 0.972549, 1.000000, 1.000000)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 42
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="MusicToggleButton" type="Button" parent="CenterContainer/SettingsPanel/SettingsContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 68)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
+text = "MUSIC: ON"
+
+[node name="SfxToggleButton" type="Button" parent="CenterContainer/SettingsPanel/SettingsContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 68)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
+text = "SFX: ON"
+
+[node name="HapticsToggleButton" type="Button" parent="CenterContainer/SettingsPanel/SettingsContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 68)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
+text = "HAPTICS: ON"
+
+[node name="BackButton" type="Button" parent="CenterContainer/SettingsPanel/SettingsContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 68)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
+text = "BACK"
