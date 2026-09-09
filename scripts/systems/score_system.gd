@@ -23,3 +23,7 @@ func add_score(amount: int) -> void:
 
 func lock_score() -> void:
 	score_locked = true
+
+
+func unlock_score() -> void:
+	score_locked = false

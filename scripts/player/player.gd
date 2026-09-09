@@ -178,6 +178,17 @@ func reset_for_run(start_position: Variant = null) -> void:
 	_target_position = global_position
 
 
+func revive(start_position: Vector2, restored_hp: int, revive_invulnerability_duration: float) -> void:
+	clear_invulnerability()
+	clear_shield()
+	_release_drag()
+	current_hp = clampi(restored_hp, 1, max_hp)
+	hp_changed.emit(current_hp, max_hp)
+	global_position = _clamp_to_play_area(start_position)
+	_target_position = global_position
+	_start_invulnerability_for(revive_invulnerability_duration)
+
+
 func reset_health() -> void:
 	current_hp = max_hp
 	hp_changed.emit(current_hp, max_hp)
@@ -283,8 +294,12 @@ func _release_drag() -> void:
 
 
 func _start_invulnerability() -> void:
+	_start_invulnerability_for(invulnerability_duration)
+
+
+func _start_invulnerability_for(duration: float) -> void:
 	_is_invulnerable = true
-	_invulnerability_time_remaining = invulnerability_duration
+	_invulnerability_time_remaining = maxf(duration, 0.0)
 
 
 func _update_invulnerability(delta: float) -> void:

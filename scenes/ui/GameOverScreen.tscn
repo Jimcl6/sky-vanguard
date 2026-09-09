@@ -114,6 +114,27 @@ theme_override_font_sizes/font_size = 26
 text = "New Best!"
 horizontal_alignment = 1
 
+
+[node name="ReviveButton" type="Button" parent="CenterContainer/Panel/GameOverContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 68)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
+text = "WATCH AD TO REVIVE"
+
+[node name="ReviveStatusLabel" type="Label" parent="CenterContainer/Panel/GameOverContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.658824, 0.894118, 1.000000, 1.000000)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 20
+text = "AD UNAVAILABLE"
+horizontal_alignment = 1
 [node name="RestartButton" type="Button" parent="CenterContainer/Panel/GameOverContent"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 68)

@@ -196,6 +196,14 @@ func lock_score() -> void:
 	score_system.lock_score()
 
 
+func revive_run(restored_hp: int, revive_invulnerability_duration: float) -> void:
+	_reset_damage_camera_shake()
+	clear_projectiles()
+	feedback_manager.clear_feedback()
+	player.revive(_get_player_start_position(), restored_hp, revive_invulnerability_duration)
+	score_system.unlock_score()
+
+
 func get_current_score() -> int:
 	return score_system.current_score
 

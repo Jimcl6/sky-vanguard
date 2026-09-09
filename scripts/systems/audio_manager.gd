@@ -27,6 +27,9 @@ var _active_bgm: AudioStream
 var _bgm_was_paused := false
 var _music_enabled := true
 var _sound_enabled := true
+var _fullscreen_ad_audio_paused := false
+var _fullscreen_ad_bgm_was_playing := false
+var _fullscreen_ad_bgm_was_paused := false
 
 
 func _ready() -> void:
@@ -78,6 +81,29 @@ func stop_bgm() -> void:
 	_bgm_player.stream = null
 	_active_bgm = null
 	_bgm_was_paused = false
+
+
+func pause_for_fullscreen_ad() -> void:
+	if _fullscreen_ad_audio_paused:
+		return
+
+	_fullscreen_ad_audio_paused = true
+	_fullscreen_ad_bgm_was_playing = _bgm_player.playing
+	_fullscreen_ad_bgm_was_paused = _bgm_player.stream_paused
+	if _fullscreen_ad_bgm_was_playing and not _fullscreen_ad_bgm_was_paused:
+		_bgm_player.stream_paused = true
+	_stop_sfx()
+
+
+func resume_after_fullscreen_ad() -> void:
+	if not _fullscreen_ad_audio_paused:
+		return
+
+	if _music_enabled and _fullscreen_ad_bgm_was_playing and not _fullscreen_ad_bgm_was_paused:
+		_bgm_player.stream_paused = false
+	_fullscreen_ad_audio_paused = false
+	_fullscreen_ad_bgm_was_playing = false
+	_fullscreen_ad_bgm_was_paused = false
 
 
 func apply_settings(settings: Dictionary) -> void:
