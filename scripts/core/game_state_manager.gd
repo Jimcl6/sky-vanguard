@@ -12,6 +12,7 @@ enum State {
 	GAME_OVER,
 	RESTARTING,
 	RETURNING_TO_MENU,
+	TUTORIAL,
 }
 
 var current_state: int = State.BOOT
@@ -48,5 +49,7 @@ func get_state_name(state: int = current_state) -> String:
 			return "RESTARTING"
 		State.RETURNING_TO_MENU:
 			return "RETURNING_TO_MENU"
+		State.TUTORIAL:
+			return "TUTORIAL"
 		_:
 			return "UNKNOWN"

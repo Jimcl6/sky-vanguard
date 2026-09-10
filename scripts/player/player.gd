@@ -2,6 +2,7 @@ extends Node2D
 class_name Player
 
 signal player_died
+signal drag_started
 signal hp_changed(current_hp: int, max_hp: int)
 signal weapon_changed(weapon_id: String, display_name: String)
 signal shield_changed(is_active: bool, hits_remaining: int, duration_remaining: float)
@@ -245,6 +246,7 @@ func _handle_screen_touch(event: InputEventScreenTouch) -> void:
 			active_touch_id = event.index
 			touch_offset = global_position - event.position
 			_set_target_from_pointer(event.position)
+			drag_started.emit()
 			get_viewport().set_input_as_handled()
 	elif event.index == active_touch_id:
 		_release_drag()
@@ -268,6 +270,7 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 			_mouse_dragging = true
 			touch_offset = global_position - event.position
 			_set_target_from_pointer(event.position)
+			drag_started.emit()
 			get_viewport().set_input_as_handled()
 	else:
 		if _mouse_dragging:

@@ -2,6 +2,7 @@ extends Control
 
 const MAIN_MENU_SCENE := preload("res://scenes/ui/MainMenu.tscn")
 const GAME_SCENE := preload("res://scenes/gameplay/Game.tscn")
+const TUTORIAL_SCENE := preload("res://scenes/gameplay/TutorialLevel.tscn")
 const GAME_OVER_SCENE := preload("res://scenes/ui/GameOverScreen.tscn")
 const GAME_STATE_MANAGER_SCRIPT := preload("res://scripts/core/game_state_manager.gd")
 const SAVE_DATA_SCRIPT := preload("res://scripts/systems/save_data.gd")
@@ -14,6 +15,7 @@ const REVIVE_INVULNERABILITY_DURATION := 2.0
 
 var main_menu: Control
 var game: Control
+var tutorial: Control
 var game_over_screen: Control
 var save_data
 var revive_used_this_run := false
@@ -56,6 +58,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _show_main_menu() -> void:
+	_clear_tutorial()
 	_clear_game()
 	_clear_game_over()
 	_clear_main_menu()
@@ -65,6 +68,7 @@ func _show_main_menu() -> void:
 	main_menu.set_best_score(save_data.get_best_score())
 	main_menu.set_settings(save_data.get_settings())
 	main_menu.start_requested.connect(_start_run)
+	main_menu.tutorial_requested.connect(_start_tutorial)
 	main_menu.settings_button_pressed.connect(_on_main_menu_settings_button_pressed)
 	main_menu.settings_back_pressed.connect(_on_main_menu_settings_back_pressed)
 	main_menu.setting_changed.connect(_on_main_menu_setting_changed)
@@ -73,6 +77,7 @@ func _show_main_menu() -> void:
 
 
 func _start_run(play_button_sfx := true) -> void:
+	_clear_tutorial()
 	if play_button_sfx:
 		audio_manager.play_button_sfx()
 	ads_manager.hide_banner()
@@ -102,6 +107,36 @@ func _start_run(play_button_sfx := true) -> void:
 	game.set_gameplay_enabled(game_state_manager.is_gameplay_allowed())
 	ads_manager.preload_rewarded_revive_ad()
 	audio_manager.play_gameplay_bgm()
+
+
+func _start_tutorial() -> void:
+	audio_manager.play_button_sfx()
+	ads_manager.hide_banner()
+	_clear_main_menu()
+	_clear_tutorial()
+	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.TUTORIAL)
+	tutorial = TUTORIAL_SCENE.instantiate()
+	add_child(tutorial)
+	tutorial.set_audio_manager(audio_manager)
+	tutorial.main_menu_requested.connect(_return_from_tutorial_to_main_menu)
+	tutorial.start_run_requested.connect(_start_run)
+	audio_manager.play_gameplay_bgm()
+
+
+func _return_from_tutorial_to_main_menu() -> void:
+	audio_manager.play_button_sfx()
+	_clear_tutorial()
+	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.RETURNING_TO_MENU)
+	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.MAIN_MENU)
+	_show_main_menu()
+
+
+func _clear_tutorial() -> void:
+	if tutorial != null:
+		var old_tutorial := tutorial
+		tutorial = null
+		remove_child(old_tutorial)
+		old_tutorial.queue_free()
 
 
 func _pause_run() -> void:

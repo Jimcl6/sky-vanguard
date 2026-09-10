@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/tutorial_level.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
+[ext_resource type="Script" path="res://scripts/gameplay/background_scroller.gd" id="3"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/ocean_training_vertical_arcade.png" id="4"]
+
+[node name="TutorialLevel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1")
+
+[node name="Background" type="Parallax2D" parent="."]
+repeat_size = Vector2(0, 2560)
+repeat_times = 2
+script = ExtResource("3")
+scroll_speed = 150.0
+
+[node name="Ocean" type="Sprite2D" parent="Background"]
+texture = ExtResource("4")
+
+[node name="OceanMirrored" type="Sprite2D" parent="Background"]
+texture = ExtResource("4")
+flip_v = true
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Player" parent="World" instance=ExtResource("2")]
+touch_radius = 150.0
+
+[node name="Guide" type="Node2D" parent="World"]

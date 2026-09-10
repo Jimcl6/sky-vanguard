@@ -626,6 +626,23 @@ Acceptance checklist:
 
 ---
 
+## Phase 15A — Tutorial Level & Onboarding
+
+Product-owner-approved addition: a Main Menu selectable control-flight tutorial
+over a generated ocean background. Reuse the real touch/drag player controller,
+teach four-direction movement, screen bounds, and pause/resume, then offer
+Play Run or Main Menu. Keep training enemy-free, non-damaging, and non-scored.
+
+The dedicated TUTORIAL state is an approved training-only exception to the
+PLAYING-only movement rule. Normal gameplay permission remains PLAYING-only;
+the tutorial enables only its own player movement and ocean scrolling.
+Its local pause stops both, clears active drag, and preserves lesson progress.
+
+See `docs/PHASE15A_TUTORIAL.md` for implementation, asset provenance, and checks.
+Android acceptance requires a physical device retest before phase approval.
+
+---
+
 ## Phase 16 — Version 1.0 Expansion Planning
 
 Purpose:

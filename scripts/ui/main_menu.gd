@@ -1,6 +1,7 @@
 extends Control
 
 signal start_requested
+signal tutorial_requested
 signal settings_button_pressed
 signal settings_back_pressed
 signal setting_changed(setting_name: String, value: bool)
@@ -30,6 +31,7 @@ func _ready() -> void:
 	SAFE_AREA_LAYOUT.watch_viewport(self, _refresh_safe_area)
 	_refresh_safe_area()
 	start_button.pressed.connect(_on_start_button_pressed)
+	%TutorialButton.pressed.connect(func() -> void: tutorial_requested.emit())
 	settings_button.pressed.connect(_on_settings_button_pressed)
 	music_toggle_button.pressed.connect(_on_music_toggle_button_pressed)
 	sfx_toggle_button.pressed.connect(_on_sfx_toggle_button_pressed)
