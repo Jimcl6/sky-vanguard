@@ -47,6 +47,15 @@ func set_movement_enabled(should_enable: bool) -> void:
 	set_physics_process(can_move)
 
 
+func deactivate_for_cleanup() -> void:
+	_has_finished = true
+	can_move = false
+	visible = false
+	set_physics_process(false)
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
+
+
 func set_feedback_manager(manager: Node) -> void:
 	_feedback_manager = manager
 

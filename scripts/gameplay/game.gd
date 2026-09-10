@@ -148,6 +148,8 @@ func set_gameplay_enabled(should_enable: bool) -> void:
 
 func set_projectiles_movement_enabled(should_enable: bool) -> void:
 	for projectile in projectile_container.get_children():
+		if projectile.is_queued_for_deletion():
+			continue
 		if projectile.has_method("set_movement_enabled"):
 			projectile.set_movement_enabled(should_enable)
 
@@ -159,21 +161,15 @@ func set_enemies_gameplay_enabled(should_enable: bool) -> void:
 
 
 func clear_projectiles() -> void:
-	for projectile in projectile_container.get_children():
-		projectile_container.remove_child(projectile)
-		projectile.queue_free()
+	_queue_free_container_children(projectile_container)
 
 
 func clear_enemies() -> void:
-	for enemy in enemy_container.get_children():
-		enemy_container.remove_child(enemy)
-		enemy.queue_free()
+	_queue_free_container_children(enemy_container)
 
 
 func clear_pickups() -> void:
-	for pickup in pickup_container.get_children():
-		pickup_container.remove_child(pickup)
-		pickup.queue_free()
+	_queue_free_container_children(pickup_container)
 
 
 func clear_player_projectiles() -> void:
@@ -302,6 +298,25 @@ func _spawn_drop_pickup(drop_category: String, drop_id: String, drop_position: V
 
 func _is_valid_drop(drop_category: String, drop_id: String) -> bool:
 	return VALID_DROP_IDS.has(drop_category) and VALID_DROP_IDS[drop_category].has(drop_id)
+
+
+func _queue_free_container_children(container: Node) -> void:
+	for child in container.get_children():
+		_prepare_for_deferred_cleanup(child)
+		if not child.is_queued_for_deletion():
+			child.queue_free()
+
+
+func _prepare_for_deferred_cleanup(node: Node) -> void:
+	if node.has_method("deactivate_for_cleanup"):
+		node.call("deactivate_for_cleanup")
+	elif node.has_method("set_movement_enabled"):
+		node.call("set_movement_enabled", false)
+	elif node.has_method("set_gameplay_enabled"):
+		node.call("set_gameplay_enabled", false)
+
+	if node is CanvasItem:
+		(node as CanvasItem).visible = false
 
 
 func _on_player_died() -> void:

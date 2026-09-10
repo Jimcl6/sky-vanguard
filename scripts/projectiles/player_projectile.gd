@@ -31,6 +31,15 @@ func set_movement_enabled(should_enable: bool) -> void:
 	set_physics_process(can_move)
 
 
+func deactivate_for_cleanup() -> void:
+	_has_hit = true
+	can_move = false
+	visible = false
+	set_physics_process(false)
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
+
+
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	body_entered.connect(_on_body_entered)
