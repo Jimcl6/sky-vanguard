@@ -1,0 +1,175 @@
+[gd_resource type="Theme" format=3 uid="uid://duigu525eujf4"]
+
+[ext_resource type="FontFile" uid="uid://o8i61jkvut4k" path="res://assets/fonts/orbitron/Orbitron.ttf" id="1"]
+[ext_resource type="FontFile" uid="uid://c12u4cfh34x83" path="res://assets/fonts/rajdhani/Rajdhani-Medium.ttf" id="2"]
+[ext_resource type="FontFile" uid="uid://dbipocdnsj0ce" path="res://assets/fonts/rajdhani/Rajdhani-SemiBold.ttf" id="3"]
+
+[sub_resource type="StyleBoxFlat" id="Disabled"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.045, 0.06, 0.075, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.322, 0.4, 0.47, 1)
+
+[sub_resource type="StyleBoxFlat" id="Focus"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.847, 0.302, 1)
+
+[sub_resource type="StyleBoxFlat" id="Hover"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.055, 0.32, 0.4, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.87, 0.98, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="Normal"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.043, 0.22, 0.29, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.18, 0.894, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="Pressed"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.025, 0.12, 0.17, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.847, 0.302, 1)
+
+[sub_resource type="StyleBoxFlat" id="DangerHover"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.46, 0.11, 0.08, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.78, 0.65, 1)
+
+[sub_resource type="StyleBoxFlat" id="DangerNormal"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.32, 0.075, 0.06, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.341, 0.255, 1)
+
+[sub_resource type="StyleBoxFlat" id="DangerPanel"]
+content_margin_left = 36.0
+content_margin_top = 34.0
+content_margin_right = 36.0
+content_margin_bottom = 34.0
+bg_color = Color(0.016, 0.024, 0.039, 0.96)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.341, 0.255, 1)
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 8
+
+[sub_resource type="FontVariation" id="HeadingFont"]
+base_font = ExtResource("1")
+variation_opentype = {
+"wght": 700.0
+}
+
+[sub_resource type="StyleBoxFlat" id="HudPanel"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.016, 0.024, 0.039, 0.9)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.18, 0.894, 1, 0.85)
+
+[sub_resource type="StyleBoxFlat" id="Panel"]
+content_margin_left = 36.0
+content_margin_top = 34.0
+content_margin_right = 36.0
+content_margin_bottom = 34.0
+bg_color = Color(0.016, 0.024, 0.039, 0.96)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.18, 0.894, 1, 1)
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 8
+
+[resource]
+default_font = ExtResource("2")
+default_font_size = 24
+Button/colors/font_color = Color(0.87, 0.98, 1, 1)
+Button/colors/font_disabled_color = Color(0.322, 0.4, 0.47, 1)
+Button/font_sizes/font_size = 26
+Button/fonts/font = ExtResource("3")
+Button/styles/disabled = SubResource("Disabled")
+Button/styles/focus = SubResource("Focus")
+Button/styles/hover = SubResource("Hover")
+Button/styles/normal = SubResource("Normal")
+Button/styles/pressed = SubResource("Pressed")
+Label/colors/font_color = Color(0.659, 0.894, 1, 1)
+Label/colors/font_shadow_color = Color(0, 0, 0, 0.8)
+Label/constants/shadow_offset_x = 1
+Label/constants/shadow_offset_y = 2
+VanguardBody/base_type = &"Label"
+VanguardButton/base_type = &"Button"
+VanguardDangerButton/base_type = &"Button"
+VanguardDangerButton/styles/hover = SubResource("DangerHover")
+VanguardDangerButton/styles/normal = SubResource("DangerNormal")
+VanguardDangerHeading/base_type = &"VanguardHeading"
+VanguardDangerHeading/colors/font_color = Color(1, 0.341, 0.255, 1)
+VanguardDangerPanel/base_type = &"PanelContainer"
+VanguardDangerPanel/styles/panel = SubResource("DangerPanel")
+VanguardGold/base_type = &"Label"
+VanguardGold/colors/font_color = Color(1, 0.957, 0.69, 1)
+VanguardGold/fonts/font = ExtResource("3")
+VanguardHeading/base_type = &"Label"
+VanguardHeading/colors/font_color = Color(0.87, 0.98, 1, 1)
+VanguardHeading/font_sizes/font_size = 40
+VanguardHeading/fonts/font = SubResource("HeadingFont")
+VanguardHudPanel/base_type = &"PanelContainer"
+VanguardHudPanel/styles/panel = SubResource("HudPanel")
+VanguardMuted/base_type = &"Label"
+VanguardMuted/colors/font_color = Color(0.64, 0.73, 0.78, 1)
+VanguardMuted/font_sizes/font_size = 22
+VanguardPanel/base_type = &"PanelContainer"
+VanguardPanel/styles/panel = SubResource("Panel")

@@ -1,36 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://w081sy5njjl8"]
 
-[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
+[ext_resource type="Script" uid="uid://dphx3ubrbfbyb" path="res://scripts/ui/hud.gd" id="1_hud"]
+[ext_resource type="Theme" uid="uid://duigu525eujf4" path="res://resources/ui/sky_vanguard_theme.tres" id="theme"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stats"]
-bg_color = Color(0.011765, 0.019608, 0.035294, 0.840000)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.203922, 0.800000, 1.000000, 0.820000)
-corner_radius_top_left = 0
-corner_radius_top_right = 0
-corner_radius_bottom_right = 0
-corner_radius_bottom_left = 0
-content_margin_left = 14.0
-content_margin_top = 10.0
-content_margin_right = 14.0
-content_margin_bottom = 10.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pause"]
-bg_color = Color(0.039216, 0.309804, 0.509804, 0.940000)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.729412, 0.956863, 1.000000, 0.980000)
-corner_radius_top_left = 0
-corner_radius_top_right = 0
-corner_radius_bottom_right = 0
-corner_radius_bottom_left = 0
-
-[node name="HUD" type="Control"]
+[node name="HUD" type="Control" unique_id=1136502342]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -38,9 +11,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = ExtResource("theme")
 script = ExtResource("1_hud")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2081488216]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -52,93 +26,71 @@ theme_override_constants/margin_top = 18
 theme_override_constants/margin_right = 18
 theme_override_constants/margin_bottom = 10
 
-[node name="HUDRow" type="HBoxContainer" parent="MarginContainer"]
+[node name="HUDRow" type="HBoxContainer" parent="MarginContainer" unique_id=99218698]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="StatsPanel" type="PanelContainer" parent="MarginContainer/HUDRow"]
+[node name="StatsPanel" type="PanelContainer" parent="MarginContainer/HUDRow" unique_id=1981145038]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_stats")
+theme_type_variation = &"VanguardHudPanel"
 
-[node name="StatsColumns" type="HBoxContainer" parent="MarginContainer/HUDRow/StatsPanel"]
+[node name="StatsColumns" type="HBoxContainer" parent="MarginContainer/HUDRow/StatsPanel" unique_id=255410502]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 18
 
-[node name="PrimaryStats" type="VBoxContainer" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns"]
+[node name="PrimaryStats" type="VBoxContainer" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns" unique_id=600817100]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 4
 
-[node name="ScoreLabel" type="Label" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns/PrimaryStats"]
+[node name="ScoreLabel" type="Label" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns/PrimaryStats" unique_id=873952054]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.925490, 0.976471, 1.000000, 1.000000)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/font_size = 22
+theme_type_variation = &"VanguardGold"
 text = "Score 0"
 text_overrun_behavior = 3
 
-[node name="HPLabel" type="Label" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns/PrimaryStats"]
+[node name="HPLabel" type="Label" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns/PrimaryStats" unique_id=480917924]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_filter = 2
-theme_override_colors/font_color = Color(1.000000, 0.956863, 0.760784, 1.000000)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/font_size = 22
+theme_type_variation = &"VanguardGold"
 text = "HP 3"
 text_overrun_behavior = 3
 
-[node name="LoadoutStats" type="VBoxContainer" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns"]
+[node name="LoadoutStats" type="VBoxContainer" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns" unique_id=1879713455]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.6
 mouse_filter = 2
 theme_override_constants/separation = 4
 
-[node name="WeaponLabel" type="Label" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns/LoadoutStats"]
+[node name="WeaponLabel" type="Label" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns/LoadoutStats" unique_id=615957314]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.886275, 0.980392, 1.000000, 1.000000)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/font_size = 22
+theme_type_variation = &"VanguardBody"
 text = "Weapon Basic Blaster"
 text_overrun_behavior = 3
 
-[node name="ShieldLabel" type="Label" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns/LoadoutStats"]
+[node name="ShieldLabel" type="Label" parent="MarginContainer/HUDRow/StatsPanel/StatsColumns/LoadoutStats" unique_id=442856324]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.737255, 0.956863, 1.000000, 1.000000)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/font_size = 22
+theme_type_variation = &"VanguardBody"
 text = "Shield Off"
 text_overrun_behavior = 3
 
-[node name="PauseButton" type="Button" parent="MarginContainer/HUDRow"]
+[node name="PauseButton" type="Button" parent="MarginContainer/HUDRow" unique_id=1816895379]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(132, 68)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_pause")
-theme_override_styles/hover = SubResource("StyleBoxFlat_pause")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pause")
+theme_type_variation = &"VanguardButton"
 text = "PAUSE"

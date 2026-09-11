@@ -25,12 +25,14 @@ var paused := false
 var target := Vector2.ZERO
 var _audio_manager: Node
 var _safe: Control
+var _header_panel: PanelContainer
 var _header: VBoxContainer
 var _instruction: Label
 var _progress: Label
 var _hint: Label
 var _pause_button: Button
 var _pause_menu: Control
+var _completion_panel: PanelContainer
 var _completion: VBoxContainer
 var _pulse := 0.0
 var _paused_for_lesson := false
@@ -125,7 +127,7 @@ func _update_lesson() -> void:
 		_hint.text = "In a run, your ship auto-fires. Focus on flying."
 		player.set_movement_enabled(false)
 		_pause_button.hide()
-		_completion.show()
+		_completion_panel.show()
 	_refresh_target()
 	guide.queue_redraw()
 
@@ -152,33 +154,48 @@ func _draw_guide() -> void:
 
 func _build_ui() -> void:
 	var layer := CanvasLayer.new()
+	layer.name = "TutorialUI"
 	add_child(layer)
 	_safe = Control.new()
+	_safe.name = "SafeArea"
 	_safe.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_safe.theme = theme
 	layer.add_child(_safe)
 	_safe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_header_panel = PanelContainer.new()
+	_header_panel.name = "InstructionPanel"
+	_header_panel.theme_type_variation = &"VanguardHudPanel"
+	_header_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_safe.add_child(_header_panel)
 	_header = VBoxContainer.new()
+	_header.name = "InstructionContent"
 	_header.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_header.add_theme_constant_override("separation", 12)
-	_safe.add_child(_header)
+	_header_panel.add_child(_header)
 	var row := HBoxContainer.new()
+	row.name = "ProgressRow"
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_header.add_child(row)
-	_progress = _label("", 24)
+	_progress = _label("ProgressLabel", "", 24, &"VanguardGold")
 	_progress.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(_progress)
-	_pause_button = _button("PAUSE", func() -> void: set_paused(true))
+	_pause_button = _button("PauseButton", "PAUSE", func() -> void: set_paused(true), Vector2(132, 68))
 	row.add_child(_pause_button)
-	_instruction = _label("", 34)
+	_instruction = _label("InstructionLabel", "", 34, &"VanguardHeading")
 	_header.add_child(_instruction)
-	_hint = _label("", 24)
+	_hint = _label("HintLabel", "", 22, &"VanguardMuted")
 	_header.add_child(_hint)
+	_completion_panel = PanelContainer.new()
+	_completion_panel.name = "CompletionPanel"
+	_completion_panel.theme_type_variation = &"VanguardPanel"
+	_safe.add_child(_completion_panel)
 	_completion = VBoxContainer.new()
+	_completion.name = "CompletionActions"
 	_completion.add_theme_constant_override("separation", 18)
-	_safe.add_child(_completion)
-	_completion.add_child(_button("PLAY RUN", func() -> void: start_run_requested.emit()))
-	_completion.add_child(_button("MAIN MENU", func() -> void: main_menu_requested.emit()))
-	_completion.hide()
+	_completion_panel.add_child(_completion)
+	_completion.add_child(_button("PlayRunButton", "PLAY RUN", func() -> void: start_run_requested.emit(), Vector2(320, 72)))
+	_completion.add_child(_button("MainMenuButton", "MAIN MENU", func() -> void: main_menu_requested.emit(), Vector2(320, 72)))
+	_completion_panel.hide()
 	_pause_menu = PAUSE_MENU.instantiate()
 	layer.add_child(_pause_menu)
 	_pause_menu.hide()
@@ -186,34 +203,33 @@ func _build_ui() -> void:
 	_pause_menu.main_menu_requested.connect(func() -> void: main_menu_requested.emit())
 
 
-func _label(value: String, font_size: int) -> Label:
+func _label(node_name: String, value: String, font_size: int, variation: StringName) -> Label:
 	var label := Label.new()
+	label.name = node_name
 	label.text = value
-	label.theme = theme
+	label.theme_type_variation = variation
 	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", Color.WHITE)
-	label.add_theme_color_override("font_outline_color", Color(0.02, 0.05, 0.07))
-	label.add_theme_constant_override("outline_size", 8)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return label
 
 
-func _button(value: String, action: Callable) -> Button:
+func _button(node_name: String, value: String, action: Callable, minimum_size: Vector2) -> Button:
 	var button := Button.new()
+	button.name = node_name
 	button.text = value
-	button.theme = theme
-	button.custom_minimum_size = Vector2(120, 72)
+	button.theme_type_variation = &"VanguardButton"
+	button.custom_minimum_size = minimum_size
 	button.pressed.connect(action)
 	return button
 
 
 func _refresh_layout() -> void:
 	SAFE_AREA.apply_full_rect_safe_area(_safe, 24, 24)
-	_header.position = Vector2(28, 0)
-	_header.size.x = _safe.size.x - 56
-	_completion.position = Vector2(80, _safe.size.y * 0.44)
-	_completion.size.x = _safe.size.x - 160
+	_header_panel.position = Vector2(28, 0)
+	_header_panel.size.x = _safe.size.x - 56
+	_completion_panel.position = Vector2(80, _safe.size.y * 0.44)
+	_completion_panel.size.x = _safe.size.x - 160
 	var texture_size: Vector2 = $Background/Ocean.texture.get_size()
 	for sprite: Sprite2D in [$Background/Ocean, $Background/OceanMirrored]:
 		sprite.scale = size / texture_size
