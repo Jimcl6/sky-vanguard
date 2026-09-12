@@ -38,7 +38,7 @@ Release signing is not configured in the repository. Do not commit keystores, pa
 Recommended upload-key storage location:
 
 ```text
-C:\Users\ai.pc\Documents\Godot Release Keys\sky-vanguard-upload.jks
+<outside-repository secure keys folder>\sky-vanguard-upload.jks
 ```
 
 If a Godot export preset references a local keystore path, remember that `export_presets.cfg` is a tracked file in this repository. Prefer either a local-only workflow that does not commit the path, or a separately reviewed release preset policy before storing any machine-specific signing path.
