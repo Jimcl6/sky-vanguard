@@ -101,7 +101,6 @@ func _start_run(play_button_sfx := true) -> void:
 	game.main_menu_requested.connect(_return_to_main_menu)
 	game.set_pause_visible(false)
 	game.set_flow_locked(false)
-	game.reset_run()
 	game.set_gameplay_enabled(false)
 	game_state_manager.transition_to(GAME_STATE_MANAGER_SCRIPT.State.PLAYING)
 	game.set_gameplay_enabled(game_state_manager.is_gameplay_allowed())
@@ -334,6 +333,8 @@ func _clear_game() -> void:
 	if game != null:
 		var old_game := game
 		game = null
+		if old_game.has_method("prepare_for_scene_disposal"):
+			old_game.call("prepare_for_scene_disposal")
 		remove_child(old_game)
 		old_game.queue_free()
 

@@ -56,6 +56,7 @@ var _shake_time_remaining := 0.0
 var _shake_duration := 0.0
 var _shake_intensity := 0.0
 var _screen_shake_enabled := true
+var _run_generation := 0
 
 
 func _ready() -> void:
@@ -188,6 +189,14 @@ func clear_player_shield() -> void:
 	player.clear_shield()
 
 
+func prepare_for_scene_disposal() -> void:
+	set_gameplay_enabled(false)
+	clear_projectiles()
+	clear_enemies()
+	clear_pickups()
+	feedback_manager.clear_feedback()
+
+
 func lock_score() -> void:
 	score_system.lock_score()
 
@@ -205,8 +214,10 @@ func get_current_score() -> int:
 
 
 func reset_run() -> void:
+	_run_generation += 1
 	background.reset_scroll()
 	_reset_damage_camera_shake()
+	set_gameplay_enabled(false)
 	clear_projectiles()
 	clear_enemies()
 	clear_pickups()
@@ -274,11 +285,13 @@ func _on_enemy_drop_requested(drop_category: String, drop_id: String, drop_posit
 		push_warning("DropCarrier requested invalid drop: %s/%s" % [drop_category, drop_id])
 		return
 
-	call_deferred("_spawn_drop_pickup", drop_category, drop_id, drop_position)
+	call_deferred("_spawn_drop_pickup", drop_category, drop_id, drop_position, _run_generation)
 
 
-func _spawn_drop_pickup(drop_category: String, drop_id: String, drop_position: Vector2) -> void:
+func _spawn_drop_pickup(drop_category: String, drop_id: String, drop_position: Vector2, request_generation: int) -> void:
 	if pickup_container == null or not is_instance_valid(pickup_container):
+		return
+	if request_generation != _run_generation:
 		return
 
 	var pickup: Node
@@ -317,6 +330,14 @@ func _prepare_for_deferred_cleanup(node: Node) -> void:
 
 	if node is CanvasItem:
 		(node as CanvasItem).visible = false
+	if node is CollisionObject2D:
+		var collision_object := node as CollisionObject2D
+		collision_object.set_deferred("collision_layer", 0)
+		collision_object.set_deferred("collision_mask", 0)
+		if collision_object is Area2D:
+			var area := collision_object as Area2D
+			area.set_deferred("monitoring", false)
+			area.set_deferred("monitorable", false)
 
 
 func _on_player_died() -> void:
