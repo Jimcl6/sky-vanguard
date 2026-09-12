@@ -11,12 +11,16 @@
 builds/
 exports/
 dist/
+test_artifacts/
 
 # Export credentials / local export configuration
 export_presets.cfg
 *.keystore
 *.p12
 *.jks
+*.pem
+*.key
+*.idsig
 
 # OS files
 .DS_Store
