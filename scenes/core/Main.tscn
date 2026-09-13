@@ -27,6 +27,7 @@ script = ExtResource("5_ads")
 
 [node name="Admob" type="Node" parent="AdsManager" unique_id=189977277]
 script = ExtResource("4_5pwbx")
+is_real = true
 banner_position = 1
 banner_size = 5
 banner_anchor_to_safe_area = true

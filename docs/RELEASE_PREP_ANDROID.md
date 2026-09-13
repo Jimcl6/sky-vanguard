@@ -41,19 +41,21 @@ android_debug_banner_id
 android_debug_rewarded_id
 ```
 
-The `Admob` node controls test vs production mode with `is_real`. The current committed scene leaves `is_real` unset/false, so debug/internal validation continues to use Google test ads. For a production release build, set `is_real = true` in `scenes/core/Main.tscn` as part of a separately reviewed release-mode change, then verify the export before upload.
+The `Admob` node controls test vs production mode with `is_real`. The signed internal AAB release candidate sets `is_real = true` in `scenes/core/Main.tscn`, so the exported release uses the configured production AdMob IDs. For debug validation builds, switch this value back to false or remove the committed override before exporting so Google test ads are used again.
 
 Do not click or repeatedly test real production ads. If testing before Play release, prefer the committed test-ad mode unless a production-ad validation task is explicitly approved. Do not add app-open ads, interstitial ads, native ads, consent flow, or additional ad formats without a separate approved task.
 
 ## Release Signing And Upload Key
 
-Release signing is not configured in the repository. Do not commit keystores, passwords, aliases, private keys, or local machine paths.
+Release signing secrets are not configured in the repository. Do not commit keystores, passwords, aliases, private keys, or local machine paths.
 
 Recommended upload-key storage location:
 
 ```text
 <outside-repository secure keys folder>\sky-vanguard-upload.jks
 ```
+
+The upload key has been created outside the repository for this release-prep pass. Keep it backed up privately and do not copy it into the repository, `exports/`, `android/`, `.godot/`, or `test_artifacts/`.
 
 The current repository workflow keeps the tracked release preset free of keystore paths and passwords. Godot 4.7 supports Android export environment variables that override export-menu keystore fields during export:
 
@@ -106,7 +108,7 @@ Remove-Item Env:\GODOT_ANDROID_KEYSTORE_RELEASE_USER
 Remove-Item Env:\GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD
 ```
 
-Do not run the release export until `Admob.is_real` has been reviewed for the release candidate and the upload key exists outside the repository.
+Only run the release export after `Admob.is_real = true` has been reviewed for the release candidate and the upload key exists outside the repository.
 
 ## Export Packaging
 
