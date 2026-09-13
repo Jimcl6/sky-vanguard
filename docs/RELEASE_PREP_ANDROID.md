@@ -8,6 +8,8 @@ This checklist prepares Sky Vanguard for a future Google Play Internal Testing u
 - App label: `Sky Vanguard`
 - Current Android preset: `Android Debug`
 - Current export output: `exports/android/sky-vanguard-debug.apk`
+- Release AAB preset: `Android Release AAB`
+- Release AAB output: `exports/android/sky-vanguard-internal-0.1.0.aab`
 - Current version name: `0.1.0`
 - Current version code: `1`
 - Recommended first internal-test label if a release preset is created: `0.1.0-internal.1`
@@ -53,7 +55,17 @@ Recommended upload-key storage location:
 <outside-repository secure keys folder>\sky-vanguard-upload.jks
 ```
 
-If a Godot export preset references a local keystore path, remember that `export_presets.cfg` is a tracked file in this repository. Prefer either a local-only workflow that does not commit the path, or a separately reviewed release preset policy before storing any machine-specific signing path.
+The current repository workflow keeps the tracked release preset free of keystore paths and passwords. Godot 4.7 supports Android export environment variables that override export-menu keystore fields during export:
+
+```text
+GODOT_ANDROID_KEYSTORE_RELEASE_PATH
+GODOT_ANDROID_KEYSTORE_RELEASE_USER
+GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD
+```
+
+Use those values only in the local terminal session that performs the release export. Do not save them in Git, docs, screenshots, logs, shell profiles, or shared notes.
+
+If a Godot export preset references a local keystore path, remember that `export_presets.cfg` is a tracked file in this repository. Prefer the environment-variable workflow above instead of storing a machine-specific signing path.
 
 Before building an upload-ready AAB:
 
@@ -67,19 +79,34 @@ Before building an upload-ready AAB:
 
 ## AAB Export Plan
 
-Current preset exports an APK because `gradle_build/export_format=0`.
+Current debug preset exports an APK because `gradle_build/export_format=0`.
+
+The tracked release preset is named `Android Release AAB` and is configured for Android App Bundle export because `gradle_build/export_format=1`.
 
 For a future non-uploaded release-prep AAB:
 
-- Use Gradle export.
-- Change export format to Android App Bundle in a reviewed release preset.
+- Use Gradle export with the `Android Release AAB` preset.
 - Keep package name as `com.dementedstudios.sky_vanguard`.
 - Keep app label as `Sky Vanguard`.
 - Keep portrait orientation.
 - Keep `android.permission.VIBRATE` only if haptics remain approved.
 - Keep AdMob plugin files and production assets included.
-- Export to `exports/android/sky-vanguard-release-prep.aab`.
+- Export to `exports/android/sky-vanguard-internal-0.1.0.aab`.
 - Do not upload to Google Play from this repository task.
+
+Example local-only release export flow after the upload key exists:
+
+```powershell
+$env:GODOT_ANDROID_KEYSTORE_RELEASE_PATH = "<outside-repository secure keys folder>\sky-vanguard-upload.jks"
+$env:GODOT_ANDROID_KEYSTORE_RELEASE_USER = "sky-vanguard-upload"
+$env:GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD = "<type locally; do not paste into chat or commit>"
+& "<Godot 4.7.1 console path>" --headless --path . --export-release "Android Release AAB" "exports/android/sky-vanguard-internal-0.1.0.aab"
+Remove-Item Env:\GODOT_ANDROID_KEYSTORE_RELEASE_PATH
+Remove-Item Env:\GODOT_ANDROID_KEYSTORE_RELEASE_USER
+Remove-Item Env:\GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD
+```
+
+Do not run the release export until `Admob.is_real` has been reviewed for the release candidate and the upload key exists outside the repository.
 
 ## Export Packaging
 
@@ -113,10 +140,13 @@ Do not remove production assets, AdMob plugin files, scenes, scripts, resources,
 - Production banner ad unit supplied and reviewed.
 - Production rewarded ad unit supplied and reviewed.
 - Upload key exists outside the repository.
+- `Admob.is_real` is intentionally set to true for the release candidate.
 - AAB export succeeds with release signing.
 - Package name is `com.dementedstudios.sky_vanguard`.
 - Version code is higher than any previous Play upload.
 - Version name is appropriate for internal testing.
+- AAB signature is verified before upload.
+- AAB manifest contains the production AdMob Android App ID.
 - App launches on Android hardware.
 - Portrait orientation holds.
 - Touch movement works.
@@ -128,6 +158,22 @@ Do not remove production assets, AdMob plugin files, scenes, scripts, resources,
 - Filtered Android logs show no fatal crash, ANR, script error, or collision cleanup warning.
 - AAB is not committed.
 - AAB is not uploaded until the product owner explicitly approves upload.
+
+## Pre-Upload Verification
+
+Before any Google Play upload, verify:
+
+```text
+package: com.dementedstudios.sky_vanguard
+versionName: 0.1.0
+versionCode: 1
+format: AAB
+signed with upload key
+production AdMob app ID in manifest
+test_artifacts/docs/tests/debug excluded
+```
+
+Do not interact with real ads during this verification. Confirm only configuration and launch behavior unless a separate real-ad validation task is approved.
 
 ## Known Non-Blocking Log Noise
 
