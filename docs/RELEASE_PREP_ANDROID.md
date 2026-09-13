@@ -1,6 +1,6 @@
 # Sky Vanguard Android Release Prep
 
-This checklist prepares Sky Vanguard for a future Google Play Internal Testing upload. It must not contain keystore passwords, private keys, Play Console credentials, or production AdMob values until those values are intentionally supplied and reviewed.
+This checklist prepares Sky Vanguard for a future Google Play Internal Testing upload. It must not contain keystore passwords, private keys, Play Console credentials, or signing secrets.
 
 ## Release Identity
 
@@ -19,17 +19,29 @@ Current test IDs are configured on `scenes/core/Main.tscn` under `Main/AdsManage
 - Android debug app ID: Google sample/test app ID
 - Android debug banner unit: Google sample/test banner unit
 - Android debug rewarded unit: Google sample/test rewarded unit
-- Production Android app ID: not supplied
-- Production banner unit ID: not supplied
-- Production rewarded unit ID: not supplied
+- Production Android app ID: provided and configured
+- Production banner unit ID: provided and configured
+- Production rewarded unit ID: provided and configured
 
-Do not replace the test IDs with guessed values. A production Play export must use real IDs from the AdMob account:
+The production IDs are configured in the same `Admob` node using:
 
-- Android App ID format: `ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY`
-- Banner Ad Unit format: `ca-app-pub-XXXXXXXXXXXXXXXX/ZZZZZZZZZZ`
-- Rewarded Ad Unit format: `ca-app-pub-XXXXXXXXXXXXXXXX/ZZZZZZZZZZ`
+```text
+android_real_application_id
+android_real_banner_id
+android_real_rewarded_id
+```
 
-Keep debug/internal exports on Google test IDs until the production IDs are available. Do not add app-open ads, interstitial ads, native ads, consent flow, or additional ad formats without a separate approved task.
+The Google test IDs remain configured in:
+
+```text
+android_debug_application_id
+android_debug_banner_id
+android_debug_rewarded_id
+```
+
+The `Admob` node controls test vs production mode with `is_real`. The current committed scene leaves `is_real` unset/false, so debug/internal validation continues to use Google test ads. For a production release build, set `is_real = true` in `scenes/core/Main.tscn` as part of a separately reviewed release-mode change, then verify the export before upload.
+
+Do not click or repeatedly test real production ads. If testing before Play release, prefer the committed test-ad mode unless a production-ad validation task is explicitly approved. Do not add app-open ads, interstitial ads, native ads, consent flow, or additional ad formats without a separate approved task.
 
 ## Release Signing And Upload Key
 
@@ -50,6 +62,8 @@ Before building an upload-ready AAB:
 - Enter signing values only in a local environment.
 - Verify no credentials are printed in logs or written to docs.
 - Verify `.gitignore` covers `*.jks`, `*.keystore`, `*.p12`, `*.pem`, `*.key`, and `*.idsig`.
+- Switch `Admob.is_real` to true only in the reviewed release configuration.
+- Confirm the Android manifest receives the production AdMob app ID during export.
 
 ## AAB Export Plan
 
